@@ -9,9 +9,9 @@
 ##        daymetRaster=na_dem
 #######################################################################
 
-import grass.script as grass
 import sys
-# this will allow us to natively call r.mapcalc
+# The related files are at $GISBASE/etc/python/grass/script/*.py
+import grass.script as grass
 from grass.pygrass.modules.shortcuts import raster as r 
  
 
@@ -33,11 +33,11 @@ def main():
 			daymetRaster = value
 
 	if param == "tmin":
-		lapseRate = 5.49
-		r.mapcalc( "%s = %f-(%f*(%s-%s/1000))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
+		lapseRate = 5.69
+		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
 	if param == "tmax":
-		lapseRate = 5.49 # is this the same for tmax?
-		r.mapcalc( "%s = %f-(%f*(%s-%s/1000))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
+		lapseRate = 5.69 # is this the same for tmax?
+		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
 	else:
 		print "Invalid param type"
 	
