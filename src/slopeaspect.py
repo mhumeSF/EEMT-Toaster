@@ -27,13 +27,13 @@ def main():
 			if command == "elevationRaster":
 				elevationRaster = value
 			elif command == "slope":
-				slope = value
+				mySlope = value
 			elif command == "aspect":
-				aspect = value
+				myAspect = value
 	
 	# call r.slope.aspect
 	slope_aspect = Module("r.slope.aspect")
-	slope_aspect(elevation=elevationRaster, slope=slope,  aspect=aspect, 
+	slope_aspect(elevation=elevationRaster, slope=mySlope,  aspect=myAspect, 
                format='degrees', overwrite=True)
 	
 if __name__ == "__main__":

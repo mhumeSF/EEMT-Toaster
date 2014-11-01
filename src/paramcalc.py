@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 ######################################################################
+## paramcalc.py
 ## Written by Daniel Spence for the ISTA-420-Midterm project
 ## for testing and debugging I strongly suggest using this resource:
 ## http://grasswiki.osgeo.org/wiki/GRASS_and_Python
@@ -33,9 +34,11 @@ def main():
 
 	if param == "tmin":
 		lapseRate = 5.69
+		tmin = paramValue
 		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
 	if param == "tmax":
 		lapseRate = 5.69 # is this the same for tmax?
+		tmax = paramValue
 		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
 	else:
 		print "Invalid param type"
