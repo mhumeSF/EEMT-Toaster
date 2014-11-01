@@ -35,7 +35,7 @@ This will simply call r.slope.aspect and out slope and aspect rasters for r.sun
 
 ##### Usage:
 
-	$ python sun.py elevationRaster=elevationRaster slope=slope aspect=aspect day=day step=step beam_rad=beam_rad isol_time=insol_time diff_rad=diff_rad refl_rad=refl_rad glob_rad=glob_rad
+	$ python sun.py elevationRaster=elevationRaster slope=slope aspect=aspect day=day step=step beam_rad=beam_rad insol_time=insol_time diff_rad=diff_rad refl_rad=refl_rad glob_rad=glob_rad
 
 ##### Inputs:
 - **elevationRaster** the OpenTopo elevation raster
@@ -44,7 +44,7 @@ This will simply call r.slope.aspect and out slope and aspect rasters for r.sun
 - **day** current day we’re working on
 - **step** time step (this is in hours so Tysonsiad 0.05 is about every 4 minutes)
 - **beam_rad** beam_rad raster outfile
-- **isol_time** sol_time raster outfile
+- **insol_time** sol_time raster outfile
 - **refl_rad** refl_rad outfile
 - **glob_rad** glob_rad outfile
 
