@@ -63,9 +63,10 @@ if long and lat:
     long = re.sub(' ', '', long)
     lat = re.sub(' ', '', lat)
     #generate command for geoconvert (command outputs UTM format)
-    command = 'echo "' + lat + ' "' + long + ' | GeoConvert -u -p -1'
-        #ALTERNATIVE: geoconvert command for decimel degrees
-    #command = 'echo "' + lat + ' "' + long + ' | GeoConvert -g -p -1'
+    #first command outputs in UTM format
+	#command = 'echo "' + lat + ' "' + long + ' | GeoConvert -u -p -1'
+    #second command for decimel degrees
+    command = 'echo "' + lat + ' "' + long + ' | GeoConvert -g -p -1'
     #print(command)
     try:
         #run geoconvert to get UTM value
