@@ -28,13 +28,19 @@ if match:
     coords_list = center_str.split('(')
     #if the list has 3 elements (assuming proper gdalinfo output format)
     if len(coords_list) == 3:
+	#save Center values(assumed to be 3rd item)
 	longlat = coords_list[2]
+	#split them on the comma
 	long_lat = longlat.split(',')
+	#if the length of the resulting list is 2
 	if len(long_lat) == 2: 
+	    #save long/lat values
 	    lat = long_lat[1][:-1].lower()
 	    long = long_lat[0].lower()
+	    #append (-)'s for S and W long/lat values
 	    if lat[-1] == 's':
 		lat = '-' + lat[:-1].strip()
+	    #remove N,S,E,W letters from strings
 	    else:
 		lat = lat[:-1]
 	    if long[-1] == 'w':
@@ -44,7 +50,7 @@ if match:
  	    #print the longitude and latitude values to the screen
 	    #print('long = ' + long , 'lat = ' + lat)
 	else:
-	    sys.exit("Improper lon/lat format in geotiff file, exiting...")
+	    sys.exit("Improper long/lat format in geotiff file, exiting...")
     else:
 	sys.exit("Improper center coordinate format in geotiff file, exiting...")
 else:
@@ -56,8 +62,10 @@ if long and lat:
     #remove white space
     long = re.sub(' ', '', long)
     lat = re.sub(' ', '', lat)
-    #generate command for geoconvert
+    #generate command for geoconvert (command outputs UTM format)
     command = 'echo "' + lat + ' "' + long + ' | GeoConvert -u -p -1'
+        #ALTERNATIVE: geoconvert command for decimel degrees
+    #command = 'echo "' + lat + ' "' + long + ' | GeoConvert -g -p -1'
     #print(command)
     try:
         #run geoconvert to get UTM value
