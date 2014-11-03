@@ -48,9 +48,9 @@ def main():
 	
 	# call r.sun
 	r.sun(elevationRaster=myElevationRaster, slope=mySlope,
-	      aspect=myAspect, day=myDay step=myStep, beam_rad=myBeam_rad,
-		  insol_time=myInsol_time, diff_rad=myDiff_rad, refl_rad=myRefl_rad,
-		  glob_rad=myGlob_rad flags="s" overwrite=true)
+	      aspect=myAspect, day=myDay step=myStep, declin="0" dist="1", 
+		  beam_rad=myBeam_rad, insol_time=myInsol_time, diff_rad=myDiff_rad, 
+		  refl_rad=myRefl_rad, glob_rad=myGlob_rad flags="s" overwrite=true)
 		  
 	
 	
