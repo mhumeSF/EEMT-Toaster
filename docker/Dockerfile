@@ -58,3 +58,6 @@ RUN ["/bin/bash", "-c", "cd /root/sources/cctools-4.2.2-source/ && ./configure &
 
 # Add cctools to $PATH
 RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/root/cctools/bin/' >> /root/.bashrc"]
+
+# Add grass binaries to $PATH
+RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/usr/lib/grass64/bin/' >> /root/.bashrc"]
