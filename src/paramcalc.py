@@ -24,7 +24,7 @@ def main():
 			if command == "param":
 				param = value
 			elif command == "paramValue":
-				paramValue = value
+				paramRaster = value
 			elif command == "rasterout":
 				rasterout = value
 			elif command == "elevationRaster":
@@ -34,12 +34,12 @@ def main():
 
 	if param == "tmin":
 		lapseRate = 5.69
-		tmin = paramValue
-		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
+		tmin = paramRaster
+		r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
 	if param == "tmax":
 		lapseRate = 5.69 # is this the same for tmax?
-		tmax = paramValue
-		r.mapcalc( "%s = %f-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
+		tmax = paramRaster
+		r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
 	else:
 		print "Invalid param type"
 	

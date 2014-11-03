@@ -24,8 +24,6 @@ def main():
 		if len(mySplit) > 1:
 			command = mySplit[0]
 			value = mySplit[1]
-			print command
-			print value
 			if command == "elevationRaster":
 				myElevationRaster = value
 			elif command == "slope":
@@ -38,7 +36,7 @@ def main():
 				myStep = value
 			elif command == "beam_rad":
 				myBeam_rad = value
-			elif command == "isol_time":
+			elif command == "insol_time":
 				myInsol_time = value
 			elif command == "diff_rad":
 				myDiff_rad = value
@@ -52,7 +50,7 @@ def main():
 	r.sun(elevationRaster=myElevationRaster, slope=mySlope,
 	      aspect=myAspect, day=myDay step=myStep, beam_rad=myBeam_rad,
 		  insol_time=myInsol_time, diff_rad=myDiff_rad, refl_rad=myRefl_rad,
-		  glob_rad=myGlob_rad)
+		  glob_rad=myGlob_rad flags="s" overwrite=true)
 		  
 	
 	
