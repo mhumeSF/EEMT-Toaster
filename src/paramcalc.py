@@ -11,9 +11,10 @@
 #######################################################################
 
 import sys
+from subprocess import call
 # The related files are at $GISBASE/etc/python/grass/script/*.py
-import grass.script as grass
-from grass.pygrass.modules.shortcuts import raster as r 
+#import grass.script as grass
+#from grass.pygrass.modules.shortcuts import raster as r 
 	
 def main():
 	for arg in sys.argv:
@@ -35,11 +36,13 @@ def main():
 	if param == "tmin":
 		lapseRate = 5.69
 		tmin = paramRaster
-		r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
+		#r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
+		call["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster ]
 	if param == "tmax":
 		lapseRate = 5.69 # is this the same for tmax?
 		tmax = paramRaster
-		r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
+		#r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
+		call["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster ]
 	else:
 		print "Invalid param type"
 	
