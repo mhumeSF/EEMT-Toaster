@@ -25,9 +25,9 @@ for arg in sys.argv:
 		if len(mySplit) > 1:
 			command = mySplit[0]
 			value = mySplit[1]
-			if command = "input":
+			if command == "input":
 				myInput = value
-			if command = "output":
+			if command == "output":
 				myOutput = value
 
 r.external(input=myInput, output=myOutput)
