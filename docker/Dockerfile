@@ -50,4 +50,9 @@ RUN wget -O - http://ccl.cse.nd.edu/software/files/$CCTOOLS.tar.gz | tar xzf - -
 RUN ["/bin/bash", "-c", "cd $CCTDIR && ./configure && make install"]
 
 # Add cctools and GRASS to $PATH
-RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/root/cctools/bin/:/usr/lib/grass64/bin' >> /root/.bashrc"]
+RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/root/scripts/:/root/cctools/bin/:/usr/lib/grass64/bin/' >> /root/.bashrc"]
+
+# Add external files
+ADD grassenv /root/
+ADD grassrc /root/
+RUN ["/bin/bash", "-c", "mv /root/grassrc /root/.grassrc6; echo \"source /root/grassenv\" >> /root/.bashrc"]
