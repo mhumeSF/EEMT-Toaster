@@ -81,10 +81,10 @@ class raster:
         try:
             # call r.sun
 	        r.sun(elevationRaster=MyElevRaster, slope=mySlope,
-	          aspect=myAspect, day=myDay step=myStep, declin="0"
+	          aspect=myAspect, day=myDay, step=myStep, declin="0",
 	          dist="1", beam_rad=myBeam_rad, insol_time=myInsol_time,
 		      diff_rad=myDiff_rad, refl_rad=myRefl_rad,
-		      glob_rad=myGlob_rad flags="s" overwrite=true)
+		      glob_rad=myGlob_rad, flags="s", overwrite=true)
         except:
             print("r.sun failed to run with specified arguments, specifics "
                 + "unknown since there are so many freakin arguments!")
