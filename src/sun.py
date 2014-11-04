@@ -43,14 +43,20 @@ def main():
 			elif command == "glob_rad":
 				myGlob_rad = value
 	
-	
 	# call r.sun
 	
 	#r.sun(elevationRaster=myElevationRaster, slope=mySlope,
 	#      aspect=myAspect, day=myDay step=myStep, declin="0" dist="1", 
 #		  beam_rad=myBeam_rad, insol_time=myInsol_time, diff_rad=myDiff_rad, 
 #		  refl_rad=myRefl_rad, glob_rad=myGlob_rad flags="s" overwrite=true)
-	call(["elevationRaster=%s" % (myElevationRaster), "slope=%s" % (mySlope), "aspect=%s" % (myAspect), "day=%s" % (myDay), "step=%s" % (myStep), "declin=0", "dist=1", "beam_rad=%s" % (myBeam_rad), "insol_time=%s" % (myInsol_time), "diff_rad=%s" % (myDiff_rad), "refl_rad=%s" % (myRefl_rad), "glob_rad=%s" % (myGlob_rad), "flags=s", "overwrite=true"])
+	call(["r.sun", "elevin=%s" % (myElevationRaster), 
+        "slopein=%s" % (mySlope), "aspin=%s" % (myAspect), 
+        "day=%s" % (myDay), "step=%s" % (myStep), "declin=0", 
+        "dist=1", "-s", "beam_rad=%s" % (myBeam_rad), 
+        "insol_time=%s" % (myInsol_time), "diff_rad=%s" % (myDiff_rad), 
+        "refl_rad=%s" % (myRefl_rad), "glob_rad=%s" % (myGlob_rad), 
+        "--overwrite"])
+	
 	
 	
 if __name__ == "__main__":
