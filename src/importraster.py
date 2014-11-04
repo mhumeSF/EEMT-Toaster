@@ -22,9 +22,9 @@ for arg in sys.argv:
 		if len(mySplit) > 1:
 			command = mySplit[0]
 			value = mySplit[1]
-			if command = "input":
+			if command == "input":
 				myInput = value
-			if command = "output":
+			if command == "output":
 				myOutput = value
 
 call(["r.external", "input=%s" % (myInput), "output=%s" % (myOutput) ])

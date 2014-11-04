@@ -51,7 +51,7 @@ if match:
 	    else:
 		long = long[:-1]
 	    #print the longitude and latitude values to the screen
-	    #print('long = ' + long , 'lat = ' + lat)
+	    print('long = ' + long , 'lat = ' + lat)
 	else:
 	    sys.exit("Improper long/lat format in geotiff file, exiting...")
     else:
