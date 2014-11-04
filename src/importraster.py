@@ -13,10 +13,7 @@
 
 import os
 import tempfile
-from grass.pygrass.modules.shortcuts import general as g
-from grass.pygrass.modules.shortcuts import raster as r
-from grass.pygrass.modules import Module
-
+from subprocess import call
 # python importraster.py input=tiff output=raster
 
 
@@ -30,6 +27,8 @@ for arg in sys.argv:
 			if command = "output":
 				myOutput = value
 
-r.external(input=myInput, output=myOutput)
-g.region(rast=myOutput)
+call(["r.external", "input=%s" % (myInput), "output=%s" % (myOutput) ])
+call(["g.region", "rast=%s" % (myOutput) ])
+#r.external(input=myInput, output=myOutput)
+#g.region(rast=myOutput)
 
