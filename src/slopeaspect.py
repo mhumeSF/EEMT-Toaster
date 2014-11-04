@@ -19,8 +19,8 @@ def main():
                 if len(mySplit) > 1:
                         command = mySplit[0]
                         value = mySplit[1]
-                        print command
-                        print value
+                        #print command
+                        #print value
                         if command == "elevationRaster":
                                 elevationRaster = value
                         elif command == "slope":
@@ -29,8 +29,11 @@ def main():
                                 myAspect = value
 
         # call r.slope.aspect
-		call(["slope.aspect", "elevation=%s" % (elevationRaster), "slope=%s" % (mySlope),
-		      "aspect=%s" % (myAspect), "format=degrees", "overwrite=True"])
+	#print elevationRaster
+	#print mySlope
+	#print myAspect
+	call(["r.slope.aspect", "elevation=%s" % (elevationRaster), "slope=%s" % (mySlope), "aspect=%s" % (myAspect), "format=degrees"])
+	
         #slope_aspect = Module("r.slope.aspect")
         #slope_aspect(elevation=elevationRaster, slope=mySlope,  aspect=myAspect,
         #        format='degrees', overwrite=True)
