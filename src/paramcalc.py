@@ -37,12 +37,12 @@ def main():
 		lapseRate = 5.69
 		tmin = paramRaster
 		#r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmin, lapseRate, elevationRaster, daymetRaster )
-		call["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster ]
+		call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmin, lapseRate, elevationRaster, daymetRaster) ])
 	if param == "tmax":
 		lapseRate = 5.69 # is this the same for tmax?
 		tmax = paramRaster
 		#r.mapcalc( "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster )
-		call["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % rasterout, tmax, lapseRate, elevationRaster, daymetRaster ]
+		call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmax, lapseRate, elevationRaster, daymetRaster) ])
 	else:
 		print "Invalid param type"
 	
