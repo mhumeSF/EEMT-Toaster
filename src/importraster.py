@@ -10,7 +10,7 @@
 ##              Concurrent raster calculations
 #######################################################################
 
-
+import sys
 import os
 import tempfile
 from subprocess import call
@@ -27,7 +27,7 @@ for arg in sys.argv:
 			if command == "output":
 				myOutput = value
 
-call(["r.external", "input=%s" % (myInput), "output=%s" % (myOutput) ])
+call(["r.external", "input=%s" % (myInput), "output=%s" % (myOutput), "--overwrite" ])
 call(["g.region", "rast=%s" % (myOutput) ])
 #r.external(input=myInput, output=myOutput)
 #g.region(rast=myOutput)
