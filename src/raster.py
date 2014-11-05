@@ -18,15 +18,15 @@ class raster:
             self.output = raster
             try:
                 #r.external(input=self.tiff, output=self.output)
-				call(["r.external", "input=%s" % (self.tiff), "output=%s" % (self.output) ])
+		call(["r.external", "input=%s" % (self.tiff), "output=%s" % (self.output) ])
             except:
                 print("r.external failed to generate raster file "
                     + "with specified input/output names "
                     + self.tiff + " and " + self.output)
 
             try:
-				#g.region(rast=self.output)
-				call(["g.region", "rast=%s" % (self.output) ])
+		#g.region(rast=self.output)
+		call(["g.region", "rast=%s" % (self.output) ])
             except:
                 print("g.region failed to generate output raster file "
                     + "with specified name: " + self.output)
@@ -63,7 +63,9 @@ class raster:
             #slope_aspect = Module("r.slope.aspect")
             #slope_aspect(elevation=elevationRaster, slope=outputSlope,
             #             aspect=outputAspect, format='degrees', overwrite=True)
-			call(["r.slope.aspect", "elevation=%s" % (elevationRaster), "slope=%s" % (mySlope), "aspect=%s" % (myAspect), "format=degrees"])
+		call(["r.slope.aspect", "elevation=%s" % (elevationRaster), 
+                "slope=%s" % (mySlope), "aspect=%s" % (myAspect), 
+                "format=degrees"])
         except:
             print("Failed to run r.slope.aspect with specified arguments")
 
@@ -79,16 +81,15 @@ class raster:
 	        #r.sun(elevationRaster=MyElevRaster, slope=mySlope,
 	        #  aspect=myAspect, day=myDay, step=myStep, declin="0",
 	        #  dist="1", beam_rad=myBeam_rad, insol_time=myInsol_time,
-		    #  diff_rad=myDiff_rad, refl_rad=myRefl_rad,
-		    #  glob_rad=myGlob_rad, flags="s", overwrite=true)
+		#  diff_rad=myDiff_rad, refl_rad=myRefl_rad,
+		#  glob_rad=myGlob_rad, flags="s", overwrite=true)
 			
-			call(["r.sun", "elevin=%s" % (myElevationRaster), 
-			      "slopein=%s" % (mySlope), "aspin=%s" % (myAspect), 
-			      "day=%s" % (myDay), "step=%s" % (myStep), "declin=0", 
-			      "dist=1", "-s", "beam_rad=%s" % (myBeam_rad), 
-				  "insol_time=%s" % (myInsol_time), "diff_rad=%s" % (myDiff_rad), 
-				  "refl_rad=%s" % (myRefl_rad), "glob_rad=%s" % (myGlob_rad), 
-				  "--overwrite"])
+		call(["r.sun", "elevin=%s" % (myElevationRaster), 
+		      "slopein=%s" % (mySlope), "aspin=%s" % (myAspect), 
+		      "day=%s" % (myDay), "step=%s" % (myStep), "declin=0", 
+		      "dist=1", "-s", "beam_rad=%s" % (myBeam_rad), 
+		      "insol_time=%s" % (myInsol_time), "diff_rad=%s" % (myDiff_rad), 
+                	"refl_rad=%s" % (myRefl_rad), "glob_rad=%s" % (myGlob_rad), 				  "--overwrite"])
         except:
             print("r.sun failed to run with specified arguments, specifics "
                 + "unknown since there are so many freakin arguments!")
@@ -104,12 +105,12 @@ class raster:
 		        lapseRate = 5.69
 		        tmin = paramRaster
 		        
-				call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmin, lapseRate, elevationRaster, daymetRaster) ])
+			call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmin, lapseRate, elevationRaster, daymetRaster) ])
 	        if param == "tmax":
 		        lapseRate = 5.69 # is this the same for tmax?
 		        tmax = paramRaster
 		      
-				call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmax, lapseRate, elevationRaster, daymetRaster) ])
+			call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterout, tmax, lapseRate, elevationRaster, daymetRaster) ])
 	        else:
 		        print "Invalid param type"
 
