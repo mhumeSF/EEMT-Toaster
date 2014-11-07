@@ -1,6 +1,22 @@
-import sys, subprocess, re, os 
+import sys, subprocess, re, os
 
 class geotiff:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     """
     Initializes a new geotiff object.
@@ -15,18 +31,18 @@ class geotiff:
             print("No valid geotiff file specified, exiting...")
 
     """
-    This method calls gdalinfo on the object's geotiff file.  It parses the 
-    output to save the center coordinates of the geotiff. It outputs a tuple 
-    of the lon, lat center coordinates of the geotiff.  
+    This method calls gdalinfo on the object's geotiff file.  It parses the
+    output to save the center coordinates of the geotiff. It outputs a tuple
+    of the lon, lat center coordinates of the geotiff.
     """
-    
+
     def getCenter(self):
         #generate command for os
         command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
         try:
             info = subprocess.check_output(command, shell = True)
-            
+
             #search for center coordinates in output of gdalinfo
             match = re.search('Center(.*)', info)
 
@@ -67,14 +83,14 @@ class geotiff:
                 print("Could not find center coordinates in gdal output")
         except:
             print("Invalid geotiff file")
-   
+
 
     """
     This method calls gdalinfo on the geotiff file and parses the output to
     acquire the top left and bottom right corner coordinates. The output is
     two tuples, the first being the x,y coordinates of the top left corner
     of the region and the second being the x,y coordinates of the bottom right
-    corner of the region.  
+    corner of the region.
     """
     def getCoordinates(self):
         #generate command for os
@@ -82,7 +98,7 @@ class geotiff:
         #try to run gdalinfo command
         try:
             info = subprocess.check_output(command, shell = True)
-            
+
             #search for center coordinates in output of gdalinfo
             UL = re.search('Upper Left(.*)', info)
             LR = re.search('Lower Right(.*)', info)
@@ -110,34 +126,34 @@ class geotiff:
                         ULlat = UL[1][:-1].lower().strip()
                         LRlong = LR[0].lower().strip()
                         LRlat = LR[1][:-1].lower().strip()
-                        
+
                         #append (-)'s for S and W long/lat values
                         #remove N,S,E,W letters from strings
                         if ULlat[-1] == 's':
                             ULlat = '-' + ULlat[:-1]
                         else:
                             ULlat = ULlat[:-1]
-                            
+
                         if ULlong[-1] == 'w':
                             ULlong = '-' + ULlong[:-1]
                         else:
                             ULlong = UL[:-1]
-                        
+
                         #print("changed upper left s's and w's")
                         if LRlat[-1] == 's':
                             LRlat = '-' + LRlat[:-1]
                         else:
                             LRlat = LRlat[:-1]
-                            
+
                         if LRlong[-1] == 'w':
                             LRlong = '-' + LRlong[:-1]
                         else:
                             LRlong = LRlong[:-1]
-                            
+
                         #print("changed lower rights s's and w's")
                         #return the longitude and latitude values as tuple
                         return ((ULlat, ULlong), (LRlat, LRlong))
-                        
+
                     else:
                         print("Improper long/lat format in geotiff file")
                 else:
