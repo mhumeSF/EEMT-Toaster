@@ -2,22 +2,6 @@ import sys, subprocess, re, os
 
 class geotiff:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     """
     Initializes a new geotiff object.
     Takes one argument, a link to a geotiff file.
