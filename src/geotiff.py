@@ -153,7 +153,7 @@ class geotiff:
     decimal degrees. It takes one argument, a tuple (lat, long) for
     the conversion. It returns decimal degree values as (lat, long)
     """
-    def toDegrees(self, coords, forDaymetR):
+    def toDegrees(self, coords):
         if coords:
             if len(coords) == 2:
                 #if longitude and latitude values were found
@@ -162,11 +162,6 @@ class geotiff:
                 #remove white space
                 UL = (re.sub(' ', '', UL[0]), re.sub(' ', '', UL[1]))
                 LR = (re.sub(' ', '', LR[0]), re.sub(' ', '', LR[1]))
-
-                if 'forDaymetR' in locals():
-                    if(forDaymetR == True):
-                        return UL, LR
-
                 #generate command for geoconvert (command outputs UTM format)
                 ULcommand = 'echo "' + UL[0] + ' "' + UL[1] + ' | GeoConvert -g -p -1'
                 LRcommand = 'echo "' + LR[0] + ' "' + LR[1] + ' | GeoConvert -g -p -1'
@@ -182,6 +177,40 @@ class geotiff:
                 print("No long/lat values extracted from geotiff, exiting...")
         else:
             print("Improper lat/long tuple provided as argument to GeoConvert")
+
+    """
+    This method generates the os commands necessary to call DaymetR. It takes 
+    one argument; a pair of lat/long coordinates in the form of a tuple.
+    The first lat/long values are the top left corner of the selected region
+    and the second two are the bottom left corner of the region. It then
+    makes an os call for DaymetR which grabs tiles using the lat long values.
+    """
+    def forDaymetR(self, coords, sYear=1980, eYear=2015, param="all", outDir="~/DaymetTiles"):
+        if coords:
+            #((lat, long),(lat, long))
+            #parse lat/long values from input tuples
+            print("Coords = " + str(coords))
+            UL = coords[0]
+            LR = coords[1]
+            #generate os command
+            command = "Rscript ./Daymet_tiles.R %s %s %d %d %s %s" \
+                % (UL, LR, sYear, eYear, param, outDir)
+            if not os.path.exists(outDir):
+                os.makedirs(outDir)
+            """
+            command = "Rscript ./Daymet_tiles.R %s %s %s %s %d %d %s %s" \
+                % (ULlat, ULlong, LRlat, LRlong, sYear, eYear, param, outDir)
+
+            """  
+            #print(command)   
+            try:
+                subprocess.check_output(command, shell = True)
+            except:
+                print("DaymetR command failed, try again!")
+            
+        else:
+            print("No coordinates supplied for DaymetR")
+
 
     def gdalwarp(self, something):
         return
