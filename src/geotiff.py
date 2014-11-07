@@ -153,7 +153,7 @@ class geotiff:
     decimal degrees. It takes one argument, a tuple (lat, long) for
     the conversion. It returns decimal degree values as (lat, long)
     """
-    def toDegrees(self, coords):
+    def toDegrees(self, coords, forDaymetR):
         if coords:
             if len(coords) == 2:
                 #if longitude and latitude values were found
@@ -162,6 +162,11 @@ class geotiff:
                 #remove white space
                 UL = (re.sub(' ', '', UL[0]), re.sub(' ', '', UL[1]))
                 LR = (re.sub(' ', '', LR[0]), re.sub(' ', '', LR[1]))
+
+                if 'forDaymetR' in locals():
+                    if(forDaymetR == True):
+                        return UL, LR
+
                 #generate command for geoconvert (command outputs UTM format)
                 ULcommand = 'echo "' + UL[0] + ' "' + UL[1] + ' | GeoConvert -g -p -1'
                 LRcommand = 'echo "' + LR[0] + ' "' + LR[1] + ' | GeoConvert -g -p -1'
@@ -177,7 +182,6 @@ class geotiff:
                 print("No long/lat values extracted from geotiff, exiting...")
         else:
             print("Improper lat/long tuple provided as argument to GeoConvert")
-
 
     def gdalwarp(self, something):
         return
