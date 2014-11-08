@@ -99,14 +99,17 @@ class geotiff:
     """
     def getCoordinates(self):
         #generate command for os
-        command = ("gdalinfo " + self.tiff)
+        # command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
         try:
-            info = subprocess.check_output(command, shell = True)
+            # info = subprocess.check_output(command, shell = True)
 
+            info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) ( 80d44'29.28\"W, 25d24'56.39\"N)"
             #search for center coordinates in output of gdalinfo
             UL = re.search('Upper Left(.*)', info)
             LR = re.search('Lower Right(.*)', info)
+
+            # print (UL.group(), LR.group())
 
             #if center is found
             if UL and LR:
@@ -124,6 +127,9 @@ class geotiff:
                     #split them on the comma
                     UL = UL.split(',')
                     LR = LR.split(',')
+
+                    # print (UL, LR)
+
                     #if the length of the resulting list is 2
                     if len(UL) == 2 and len(LR) == 2:
                         #save lat/lon values in tuple values (lat,lon)
@@ -157,6 +163,9 @@ class geotiff:
 
                         #print("changed lower rights s's and w's")
                         #return the longitude and latitude values as tuple
+
+                        # print ((ULlat, ULlon), (LRlat, LRlon))
+
                         return ((ULlat, ULlon), (LRlat, LRlon))
 
                     else:
@@ -176,7 +185,7 @@ class geotiff:
     """
     def toDegrees(self, coords):
         if coords:
-            print (coords)
+            # print (coords)
             if len(coords) == 2:
                 #if longitude and latitude values were found
                 UL = coords[0]
@@ -249,7 +258,7 @@ class geotiff:
             #run the conversion on the lat/lon
             i = abs(int((lat-14)/2))
             j = abs(int((lon+52)/2))
-            print ("converted matrix values: %d %d") % (i,j)
+            # print ("converted matrix values: %d %d") % (i,j)
             return (i,j)
         else:
             print("No coordinates specified to convert from decimal to matrix")
@@ -261,7 +270,7 @@ class geotiff:
     def getTiles (self, coords):
         if coords and len(coords) == 2:
             UL = self.toMatrix(coords[0].split())
-            LR = self.toMatrix(coords[0].split())
+            LR = self.toMatrix(coords[1].split())
             # if (UL == LR):
             #     return TileIdMatrix[UL[0]][UL[1]]
             # else:
@@ -271,25 +280,23 @@ class geotiff:
     This method takes in 2x(i,j) indices and returns a list of tiles
     """
     def getTileList (self, indices):
-        i1 = indices[0][0]
-        j1 = indices[0][1]
-        i2 = indices[1][0] + 1
-        j2 = indices[1][1] + 1
+        i1 = min (indices[0][0], indices[1][0])
+        j1 = min (indices[0][1], indices[1][1])
+        i2 = max (indices[0][0], indices[1][0])
+        j2 = max (indices[0][1], indices[1][1])
  
+        # print (i1, j1)
+        # print (i2, j2)
+
         tiles = []
 
-        for i in range (i1, i2):
-            for j in range (j1, j2):
+        for i in range (i1, i2 + 1):
+            for j in range (j1, j2 + 1):
                 tile = TileIdMatrix[i][j]
                 if tile > 0 :
                     tiles.append(tile)
+        print ("Number of tiles: %d") % len(tiles)
         return tiles
 
     def gdalwarp(self, something):
         return
-
-if __name__=="__main__" :
-    print (TileIdMatrix[0][0])
-    print (TileIdMatrix[0][39])
-    print (TileIdMatrix[18][0])
-    print (TileIdMatrix[18][39])
