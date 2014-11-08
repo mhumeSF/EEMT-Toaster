@@ -1,26 +1,7 @@
 from geotiff import *
 
-florida = geotiff("../dems/florida.output.mean.tif")
-coords = florida.getCoordinates()
-degrees = florida.toDegrees(coords)
-print("florida center: " + str(degrees))
-# print (type(degrees[0]))
-# splits = degrees[0].split()
-# print (splits[0])
-# print (splits[1])
-matrix = florida.toMatrix(degrees[0].split())
-print("Matrix coordinates: " + str(matrix))
-
-cali = geotiff("../dems/cali.output.mean.tif")
-coords = cali.getCoordinates()
-degrees = cali.toDegrees(coords)
-print("cali center" + str(degrees))
-matrix = cali.toMatrix(degrees[0].split())
-print("Matrix coordinates: " + str(matrix))
-
-brazil = geotiff("../dems/brazil.output.mean.tif")
-coords = brazil.getCoordinates()
-degrees = brazil.toDegrees(coords)
-print("brazil center" + str(degrees))
-matrix = brazil.toMatrix(degrees[0].split())
-print("Matrix coordinates: " + str(matrix))
+for i in ("florida","cali","na_dem"):
+    locn = geotiff("../dems/" + i + ".output.mean.tif")
+    coords = locn.getCoordinates()
+    degrees = locn.toDegrees(coords)
+    print (locn.getTiles (degrees))
