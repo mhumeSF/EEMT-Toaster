@@ -8,7 +8,7 @@ class geotiff:
     """
     def __init__(self, tiff = None):
         if not tiff:
-           tiff = raw_input("Input path to geotiff file: ")
+            tiff = raw_input("Input path to geotiff file: ")
         try:
             self.tiff = tiff
         except:
@@ -194,13 +194,13 @@ class geotiff:
             LR = coords[1]
             #generate os command
             command = "Rscript ./Daymet_tiles.R %s %s %d %d %s %s" \
-                % (UL, LR, sYear, eYear, param, outDir)
+                    % (UL, LR, sYear, eYear, param, outDir)
             #if the output directory doesn't exist, create it
             if not os.path.exists(outDir):
                 os.makedirs(outDir)
             """
             command = "Rscript ./Daymet_tiles.R %s %s %s %s %d %d %s %s" \
-                % (ULlat, ULlon, LRlat, LRlon, sYear, eYear, param, outDir)
+                    % (ULlat, ULlon, LRlat, LRlon, sYear, eYear, param, outDir)
 
             """  
             #print(command)   
@@ -208,40 +208,29 @@ class geotiff:
                 subprocess.check_output(command, shell = True)
             except:
                 print("DaymetR command failed, try again!")
-            
+
         else:
             print("No coordinates supplied for DaymetR")
 
     """
     This method converts coordinates in decimal lat/lon format into the proper
     format to query the tile number matrix that we have built. It takes one
-    argument, a tuple, which is a pair of lat/lon coordinates which corespond
-    to the upper left and lower right corners of a selected region. The method
-    takes the upper left It returns integer values that
-    corespond to values in the tile number matrix.
+    argument, a tuple, which is a pair of lat/lon coordinates and returns the
+    local matrix indices corresponding to the coords. These can be used to 
+    lookup the index of tile IDs.
     """
     def toMatrix(self, coords):
         if coords and len(coords) == 2:
             #get lat/lon coords from arg
-            UL = coords[0]
-            LR = coords[1]
-            UL = UL.split()
-            LR = LR.split()
-            
-            
-            lat = float(lat)
-            lon = float(lon)
+            lat = float(coords[0])
+            lon = float(coords[1])
             #run the conversion on the lat/lon
-            lat = (lat-14)/2
-            lon = (lon+52)/2
-            print(lat,lon)
-            lat = int(lat)
-            lon = int(lon)
-            print(lat,lon)
-            return (lat, lon)
+            i = int((lat-14)/2)
+            j = int((lon+52)/2)
+            print ("converted matrix values: %d %d") % (i,j)
+            return (i,j)
         else:
             print("No coordinates specified to convert from decimal to matrix")
-
 
     def gdalwarp(self, something):
         return
