@@ -48,3 +48,36 @@ Output format
 Visualization
 ==
 
+
+Geotiff Class Interface
+==
+    init():
+    ex: tiff = Geotiff("output.mean.tif")
+    Initializes a new geotiff object.
+    Takes one argument, a link to a geotiff file.
+
+    Unnecessary???
+    getCenter():
+    ex: center = tiff.getCenter()
+    This method calls gdalinfo on the object's geotiff file.  It parses the 
+    output to save the center coordinates of the geotiff. It outputs a tuple 
+    of the lon, lat center coordinates of the geotiff.
+    
+    getCordinates():
+    ex: corners = tiff.getCorners()
+    This method calls gdalinfo on the geotiff file and parses the output to
+    acquire the top left and bottom right corner coordinates. The output is
+    two tuples, the first being the x,y coordinates of the top left corner
+    of the region and the second being the x,y coordinates of the bottom right
+    corner of the region.
+    
+    toDegrees():
+    ex: decimal = tiff.toDegrees(center)
+    This method converts coordinates in day,hour,minute,second format to
+    decimal degrees. It takes one argument, a tuple (lat, long) for
+    the conversion. It returns decimal degree values as (lat, long)
+
+    gdalwarp():
+    ex: warped = tiff.gdalwarp(...)
+    This method warps the geotiff object into the coordinate system
+    specified as and argument. The method 
