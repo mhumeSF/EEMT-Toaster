@@ -99,12 +99,13 @@ class geotiff:
     """
     def getCoordinates(self):
         #generate command for os
-        # command = ("gdalinfo " + self.tiff)
+        command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
         try:
-            # info = subprocess.check_output(command, shell = True)
+            info = subprocess.check_output(command, shell = True)
 
-            info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) ( 80d44'29.28\"W, 25d24'56.39\"N)"
+            # This is a static set of lat/longs for testing purposes
+            # info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) ( 80d44'29.28\"W, 25d24'56.39\"N)"
             #search for center coordinates in output of gdalinfo
             UL = re.search('Upper Left(.*)', info)
             LR = re.search('Lower Right(.*)', info)
