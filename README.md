@@ -79,3 +79,5 @@ Geotiff Class Interface
     ex: warped = tiff.gdalwarp(...)
     This method warps the geotiff object into the coordinate system
     specified as and argument. The method 
+
+
