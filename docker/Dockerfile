@@ -52,33 +52,6 @@ RUN ["/bin/bash", "-c", "cd $CCTDIR && ./configure && make install"]
 # Add cctools and GRASS to $PATH
 RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/root/scripts/:/root/cctools/bin/:/usr/lib/grass64/bin/' >> /root/.bashrc"]
 
-#####
-# Mike's Additions - REVIEW
-#####
-# Add Rscript
-RUN echo "deb http://cran.cnr.berkeley.edu/bin/linux/ubuntu trusty/" >> /etc/apt/sources.list
-
-# Add the signed key
-RUN     gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E084DAB9
-RUN     gpg -a --export E084DAB9 | apt-key add -
-RUN apt-get -y update
-RUN apt-get -y install r-base
-
-# Setup R repos source URL
-RUN echo "r <- getOption('repos'); r['CRAN'] <- 'http://cran.us.r-project.org'; options(repos = r);" > ~/.Rprofile
-
-# Install DaymetR depenedencies
-RUN apt-get -y install libgdal-dev libgeos-dev libproj-dev
-RUN Rscript -e "install.packages('sp')"
-RUN Rscript -e "install.packages('rgeos')"
-RUN Rscript -e "install.packages('rgdal')"
-
-# Grab DaymetR
-RUN git clone https://bitbucket.org/khufkens/daymetr /opt/daymetr
-RUN R CMD INSTALL /opt/daymetr/DaymetR.tar.gz
-ADD daymet_tile.R /root/
-
-
 # Add external files
 ADD grassenv /root/
 ADD grassrc /root/
