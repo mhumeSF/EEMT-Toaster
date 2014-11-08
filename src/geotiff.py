@@ -15,18 +15,16 @@ class geotiff:
             print("No valid geotiff file specified, exiting...")
 
     """
-    This method calls gdalinfo on the object's geotiff file.  It parses the
-    output to save the center coordinates of the geotiff. It outputs a tuple
-    of the lon, lat center coordinates of the geotiff.
+    This method calls gdalinfo on the object's geotiff file.  It parses the 
+    output to save the center coordinates of the geotiff. It outputs a tuple 
+    of the lon, lat center coordinates of the geotiff.  
     """
-
     def getCenter(self):
         #generate command for os
         command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
         try:
             info = subprocess.check_output(command, shell = True)
-
             #search for center coordinates in output of gdalinfo
             match = re.search('Center(.*)', info)
 
@@ -52,11 +50,11 @@ class geotiff:
                             lat = '-' + lat[:-1].strip()
                         #remove N,S,E,W letters from strings
                         else:
-                            lat = lat[:-1].strip()
+                            lat = lat[:-1]
                         if long[-1] == 'w':
                             long = '-' + long[:-1].strip()
                         else:
-                            long = long[:-1].strip()
+                            long = long[:-1]
                         #return the longitude and latitude values as tuple
                         return (lat , long)
                     else:
@@ -70,6 +68,7 @@ class geotiff:
 
 
     """
+<<<<<<< HEAD
     This method calls gdalinfo on the geotiff file and parses the output to
     acquire the top left and bottom right corner coordinates. The output is
     two tuples, the first being the x,y coordinates of the top left corner
@@ -214,3 +213,4 @@ class geotiff:
 
     def gdalwarp(self, something):
         return
+
