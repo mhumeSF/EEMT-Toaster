@@ -63,20 +63,21 @@ def main():
 
         call([
             "r.sun", \
-                    "elevin=%s" % (myElevationRaster), \
-                    "slopein=%s" % (mySlope), \
-                    "aspin=%s" % (myAspect), \
-                    "day=%s" % (myDay), \
-                    "step=%s" % (myStep), \
-                    "declin=0", \
-                    "dist=1", \
-                    "-s", \
-                    "beam_rad=%s" % (myBeam_rad), \
-                    "insol_time=%s" % (myInsol_time), \
-                    "diff_rad=%s" % (myDiff_rad), \
-                    "refl_rad=%s" % (myRefl_rad), \
-                    "glob_rad=%s" % (myGlob_rad), \
-                    "--overwrite"])
+                "elevin=%s" % (myElevationRaster), \
+                "slopein=%s" % (mySlope), \
+                "aspin=%s" % (myAspect), \
+                "day=%s" % (myDay), \
+                "step=%s" % (myStep), \
+                "declin=0", \
+                "dist=1", \
+                "-s", \
+                "beam_rad=%s" % (myBeam_rad), \
+                "insol_time=%s" % (myInsol_time), \
+                "diff_rad=%s" % (myDiff_rad), \
+                "refl_rad=%s" % (myRefl_rad), \
+                "glob_rad=%s" % (myGlob_rad), \
+                "--overwrite"
+                ])
 
 
 
