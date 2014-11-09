@@ -52,10 +52,7 @@ def main():
         #   step=myStep,
         #   declin="0",
         #   dist="1",
-        #   beam_rad=myBeam_rad,
         #   insol_time=myInsol_time,
-        #   diff_rad=myDiff_rad,
-        #   refl_rad=myRefl_rad,
         #   glob_rad=myGlob_rad,
         #   flags="s",
         #   overwrite=true
@@ -71,10 +68,7 @@ def main():
                 "declin=0", \
                 "dist=1", \
                 "-s", \
-                "beam_rad=%s" % (myBeam_rad), \
                 "insol_time=%s" % (myInsol_time), \
-                "diff_rad=%s" % (myDiff_rad), \
-                "refl_rad=%s" % (myRefl_rad), \
                 "glob_rad=%s" % (myGlob_rad), \
                 "--overwrite"
                 ])
