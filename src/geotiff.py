@@ -304,6 +304,6 @@ class geotiff:
 		   -multi -dstnodata 0 -of input output"
 	    try:
 	        info = subprocess.check_output(command, shell = True)
-            return output
+            	return output
 	    except:
 	        print("Gdalwarp command failed")
