@@ -1,3 +1,4 @@
+#!/usr/bin/python
 from raster import raster
 from work_queue import *
 from geotiff import *
@@ -15,7 +16,7 @@ if __name__ == '__main__':
 	port = 0
   
 	if len(sys.argv) < 2:
-		print "entryPoint [input] [year]"
+		print ("entryPoint [input] [year]")
 		
 		sys.exit(1)
 	
@@ -26,7 +27,7 @@ if __name__ == '__main__':
 	try:
 		q = WorkQueue(port)
 	except:
-		print "Instantiation of Work Queue failed!" 
+		print ("Instantiation of Work Queue failed!")
 		sys.exit(1)
 	
 	geo = geotiff(input)
@@ -39,7 +40,7 @@ if __name__ == '__main__':
 	try:
 		r = raster(warptiff, elevRaster)
 	except:
-		print "Cannot create raster: " + elevRaster
+		print ("Cannot create raster: " + elevRaster)
 		sys.exit(1)
 	
 	slope = elevRaster + "_slope"
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 	try:
 		r.slopeAspect(elevRaster, slope, aspect)
 	except:
-		print "Cannot create slope and aspect: " + slope + " " + aspect
+		print ("Cannot create slope and aspect: " + slope + " " + aspect)
 		sys.exit(1)
 	
 	#r.sun( #   elevationRaster=myElevationRaster,
@@ -101,20 +102,21 @@ if __name__ == '__main__':
 			t.specify_file(rasterPath, glob_rad, WORK_QUEUE_OUTPUT, cache=False)
 		"""
 		taskid = q.submit(t)
-		print "submitted task (id# %d): %s" % (taskid, t.command)
+		print ("submitted task (id# %d): %s" % (taskid, t.command))
 		
-	print "listening on port %d..." % q.port
+	print ("listening on port %d..." % q.port)
 
 	while not q.empty():
 		t = q.wait(5)
 		if t:
-			print "task (id# %d) complete: %s (return code %d)" % (t.id, t.command, t.return_status)
+			print ("task (id# %d) complete: %s (return code %d)" % (t.id, t.command, t.return_status))
 			if t.return_status != 0:
+                            print ("Somethings probably Wrong")
         # The task failed. Error handling (e.g., resubmit with new parameters, examine logs, etc.) here
         #None
 	#task object will be garbage collected by Python automatically when it goes out of scope
 
-	print "all tasks complete!"
+	print ("all tasks complete!")
 
 	#work queue object will be garbage collected by Python automatically when it goes out of scope
 	sys.exit(0)

@@ -142,7 +142,7 @@ class raster:
             tmax = paramRaster
             call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterOut, tmax, lapseRate, elevRaster, daymetRaster) ])
         else:
-            print "Invalid param type"
+            print ("Invalid param type")
 
         # TODO: Add the rest of the equations for each parameter
 

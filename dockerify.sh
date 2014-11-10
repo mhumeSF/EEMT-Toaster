@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Script to build a docker image and deploy containers running our application.
 
-# set -x
+set -x
 
 err () {
 	echo $1 1>&2
@@ -24,22 +24,20 @@ build_docker() {
 
 run_docker () {
 	docker run \
-		`# Interactive in a pseudo-terminal. Uncomment if required` \
-		`# -i -t` \ 
 		`# With name of the container as hyper_compute` \
-		--name hyper_compute \
+		--name hyper_compute_$(date +%Y_%m_%d_%H_%M_%S) \
 		`# Mount a $1 as the folder containing tiffs` \
 		-v $1:/root/dems \
 		`# Mount the scripts folder` \
-		-v $PWD/scripts:/root/scripts \
+		-v $PWD/src:/root/scripts \
 		`# From the latest image` \
 		hypercompute:latest \
 		`# Call this command to start the container` \
-		"/bin/bash -c /roots/scripts/entryPoint.py"
+		/root/scripts/entryPoint.py
 }
 
 main () {
-	if [ ! $# -eq "2" ]; then
+	if [ $# -eq "1" ]; then
 		err "Usage: $0 [build/run] <dems_folder>"
 	fi
 
@@ -48,7 +46,10 @@ main () {
 			build_docker
 			;;
 		"run" )
-			run_docker $2
+			if [ ! $# -eq "2" ]; then
+				err "Usage: $0 [build/run] <dems_folder>"
+			fi
+			run_docker $PWD/$2
 			;;
 		* )
 			err "$1: Invalid operation"
