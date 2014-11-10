@@ -292,15 +292,18 @@ class geotiff:
 
 
     """
-    This method calls gdalwarp on its argument to warp the coordinates 
+    This method calls gdalwarp on its argument to warp the coordinates of the
+    geotiff file to the new coordinate system. It outputs a geotiff file.
+    The two arguments are filenames to an input geotiff file and an output
+    geotiff file. 
     """ 
     def gdalwarp(self, input, output):
 	    command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
 		 \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 \
 		   +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear \
-		   -multi -dstnodata 0 -of output input"
+		   -multi -dstnodata 0 -of input output"
 	    try:
 	        info = subprocess.check_output(command, shell = True)
-                return output
+            return output
 	    except:
 	        print("Gdalwarp command failed")
