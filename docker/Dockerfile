@@ -55,5 +55,4 @@ RUN ["/bin/bash", "-c", "echo 'export PATH=$PATH:/root/scripts/:/root/cctools/bi
 # Add external files
 ADD grassenv /root/
 ADD grassrc /root/
-ADD MAPSET /root/
 RUN ["/bin/bash", "-c", "mv /root/grassrc /root/.grassrc6; echo \"source /root/grassenv\" >> /root/.bashrc"]
