@@ -14,14 +14,14 @@ if __name__ == '__main__':
 	
 	port = 0
   
-	if len(sys.argv) < 3:
-		print "runMe input start_yr end_yr"
+	if len(sys.argv) < 2:
+		print "entryPoint [input] [year]"
 		
 		sys.exit(1)
 	
 	input =    sys.argv[1]
-	start_yr = sys.argv[2]
-	end_yr =   sys.argv[3]
+	year = sys.argv[2]
+	
 	
 	try:
 		q = WorkQueue(port)
@@ -50,10 +50,7 @@ if __name__ == '__main__':
 		print "Cannot create slope and aspect: " + slope + " " + aspect
 		sys.exit(1)
 	
-	
-	
-	#r.sun(
-        #   elevationRaster=myElevationRaster,
+	#r.sun( #   elevationRaster=myElevationRaster,
         #   slope=mySlope,
         #   aspect=myAspect,
         #   day=myDay,
@@ -66,9 +63,13 @@ if __name__ == '__main__':
         #   overwrite=true
         #   )
 	
-	for day in range(1,365):
+	endDay = 367 if (year % 4) == 0 else 366
+
+	for day in range(1,endDay):
 	
-		insole_time = elevRaster + "_" + 
+		insole_time = elevRaster + "_" + year + "_" + day
+		glob_rad = elevRaster + "_" + year + "_" + day
+ 
 		command = "python sun.py " + \
 		          " elevationRaster=" + elevRaster + \
 				  " slope=" + slope + \
@@ -83,11 +84,12 @@ if __name__ == '__main__':
 		t = Task(command)
 		
 		# do we need an absolute path?
-		pythonPath = "/usr/local/bin"
-		t.specify_file(pythonPath, "python", WORK_QUEUE_INPUT, cache=True)
-		t.specify_file("sun.py", "sun.py", WORK_QUEUE_INPUT, cache=False)
+		#pythonPath = "/usr/local/bin"
+		#t.specify_file(pythonPath, "python", WORK_QUEUE_INPUT, cache=True)
+		#t.specify_file("sun.py", "sun.py", WORK_QUEUE_INPUT, cache=False)
 		
 		# we might need these from the user..
+		"""
 		grassdataPath = ""
 		Location = ""
 		Mapset = ""
@@ -97,7 +99,7 @@ if __name__ == '__main__':
 			rasterPath = basePath + s
 			t.specify_file(rasterPath, insol_time, WORK_QUEUE_OUTPUT, cache=False)
 			t.specify_file(rasterPath, glob_rad, WORK_QUEUE_OUTPUT, cache=False)
-		
+		"""
 		taskid = q.submit(t)
 		print "submitted task (id# %d): %s" % (taskid, t.command)
 		
@@ -108,9 +110,9 @@ if __name__ == '__main__':
 		if t:
 			print "task (id# %d) complete: %s (return code %d)" % (t.id, t.command, t.return_status)
 			if t.return_status != 0:
-            # The task failed. Error handling (e.g., resubmit with new parameters, examine logs, etc.) here
-            None
-      #task object will be garbage collected by Python automatically when it goes out of scope
+        # The task failed. Error handling (e.g., resubmit with new parameters, examine logs, etc.) here
+        #None
+	#task object will be garbage collected by Python automatically when it goes out of scope
 
 	print "all tasks complete!"
 
