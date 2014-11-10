@@ -295,12 +295,12 @@ class geotiff:
     This method calls gdalwarp on its argument to warp the coordinates 
     """ 
     def gdalwarp(self, input, output):
-	command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
+	    command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
 		 \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 \
 		   +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear \
 		   -multi -dstnodata 0 -of output input"
-	try:
-	    info = subprocess.check_output(command, shell = True)
-            return output
-	except:
-	    print("Gdalwarp command failed")
+	    try:
+	        info = subprocess.check_output(command, shell = True)
+                return output
+	    except:
+	        print("Gdalwarp command failed")
