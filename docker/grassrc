@@ -1,4 +1,4 @@
-GISDBASE: /root
+GISDBASE: /root/grassdata
 LOCATION_NAME: HotSmokinBarrels
 MAPSET: PERMANENT
 DIGITIZER: none
