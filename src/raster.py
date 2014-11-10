@@ -4,6 +4,7 @@ import tempfile
 # The related files are at $GISBASE/etc/python/grass/script/*.py
 from subprocess import call
 
+
 class raster:
 
     """
@@ -34,12 +35,12 @@ class raster:
         else:
             print("Missing input tiff or output raster argument")
 
+
     """
     This exports the raster files using the command r.external and
     g.region. It takes two arguments, the first is a raster and the second
         is the name of the geoTiff to output as.
     """
-
     def export(self, raster, output):
         try:
             call(["r.out.gdal", "input=%s" % (raster), "output=%s" % (output)])
@@ -47,8 +48,6 @@ class raster:
             print("r.in.gdal failed to generate your geoTif")
 
                 #r.external(input=myInput, output=myOutput)
-
-
 
 
     """
@@ -126,7 +125,7 @@ class raster:
                     + "unknown since there are so many freakin arguments!")
 
 
-            """
+    """
     This method calls the r.mapcalc function from the grass module. Its output
     is based on which parameter type is specified. Different calculations are
     done depending on the parameter.
@@ -148,5 +147,3 @@ class raster:
         # TODO: Add the rest of the equations for each parameter
 
     #def rPatch(self):
-
-
