@@ -1,5 +1,5 @@
-GISDBASE: /root
-LOCATION_NAME: tutorial
+GISDBASE: /root/grassdata
+LOCATION_NAME: HotSmokinBarrels
 MAPSET: PERMANENT
 DIGITIZER: none
 GRASS_GUI: text

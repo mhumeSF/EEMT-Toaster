@@ -1,0 +1,11 @@
+UNIQUE=`mktemp`
+MYTMP=`basename $UNIQUE`
+rm -f $UNIQUE
+
+export GISBASE="/usr/lib/grass64"
+export PATH="$PATH:$GISBASE/bin:$GISBASE/scripts"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$GISBASE/lib"
+export GISRC=~/.grassrc6
+export PYTHONPATH="$GISBASE/etc/python"
+export SHELL=/bin/bash
+export GIS_LOCK=$MYTMP

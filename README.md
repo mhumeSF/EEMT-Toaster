@@ -1,6 +1,8 @@
 Overview of the project
 ==
 
+Please Read: docker/README.md to setup a docker image and instantiate a container.
+
 Different stages of the project:
 * Data collection - Plain Download from OpenTOPO
 * Data storage - Store on iPlant? FutureGrid? LAX/LAZ files: compressed Lidar Data.
