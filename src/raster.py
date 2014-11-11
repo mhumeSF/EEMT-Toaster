@@ -16,10 +16,12 @@ class raster:
     def __init__(self, tiff, raster):
         if tiff and raster:
             self.tiff = tiff
+            warped = tiff + ".warped"
             self.output = raster
             try:
                 #r.external(input=self.tiff, output=self.output)
-                call(["r.external", "input=%s" % (self.tiff), "output=%s" % (self.output), "-o", "--overwrite" ])
+                os.system("gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear -multi -dstnodata 0 -of GTiff %s %s" % (tiff, warped))
+                call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
             except:
                 print("r.external failed to generate raster file "
                         + "with specified input/output names "
@@ -27,7 +29,7 @@ class raster:
 
             try:
                 #g.region(rast=self.output)
-                call(["g.region", "rast=%s" % (self.output) ])
+                os.system("g.region rast=%s" % (self.output))
 
             except:
                 print("g.region failed to generate output raster file "
@@ -43,7 +45,7 @@ class raster:
     """
     def export(self, raster, output):
         try:
-            call(["r.out.gdal", "input=%s" % (raster), "output=%s" % (output)])
+            os.system("r.out.gdal input=%s output=%s" % (raster, output))
         except:
             print("r.in.gdal failed to generate your geoTif")
 
@@ -66,24 +68,23 @@ class raster:
             # format='degrees',
             # overwrite=True)
 
-            call([
-                "r.slope.aspect",
-                "elevation=%s" % (elevationRaster),
-                "slope=%s" % (outputSlope),
-                "aspect=%s" % (outputAspect),
-                "format=degrees",
-                "--o"
-                ])
+            command = "r.slope.aspect" \
+                + " elevation=" + elevationRaster \
+                + " slope=" + outputSlope \
+                + " aspect=" + outputAspect \
+                + " format=degrees" \
+                + " --o"
+            os.system(command)
+
         except:
             print("Failed to run r.slope.aspect with specified arguments")
-
 
     """
     This method calls the r.sun function from the grass module. There are a
     ton of arguments for it to run properly.
     """
-    def sun(self, myElevRaster, mySlope, myAspect, myDay, myStep,
-            myInsol_time, myGlob_rad):
+    def sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
+
         try:
             # call r.sun
             #   r.sun(
@@ -102,24 +103,22 @@ class raster:
             #   flags="s",
             #   overwrite=true
             #   )
+            command = (
+                "r.sun " + \
+                " elevin=" + myElevRaster + \
+                " slopein=" + mySlope + \
+                " aspin=" + myAspect + \
+                " day=" + myDay + \
+                " step=" + myStep + \
+                " declin=0" + \
+                " dist=1" + \
+                " -s" + \
+                " insol_time=" + myInsol_time + \
+                " glob_rad=" + myGlob_rad + \
+                " --overwrite"
+                )
+            os.system(command)
 
-            call([
-                "r.sun", \
-                "elevin=%s" % (myElevationRaster), \
-                "slopein=%s" % (mySlope), \
-                "aspin=%s" % (myAspect), \
-                "day=%s" % (myDay), \
-                "step=%s" % (myStep), \
-                "declin=0", \
-                "dist=1", \
-                "-s", \
-                "beam_rad=%s" % (myBeam_rad), \
-                "insol_time=%s" % (myInsol_time), \
-                "diff_rad=%s" % (myDiff_rad), \
-                "refl_rad=%s" % (myRefl_rad), \
-                "glob_rad=%s" % (myGlob_rad), \
-                "--overwrite"
-                ])
         except:
             print("r.sun failed to run with specified arguments, specifics "
                     + "unknown since there are so many freakin arguments!")
@@ -135,15 +134,22 @@ class raster:
         if param == "tmin":
             lapseRate = 5.69
             tmin = paramRaster
-            call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterOut, tmin, lapseRate, elevRaster, daymetRaster) ])
+            command = "r.mapcalc %s = %s-(%f/1000*(%s-%s))" % (rasterOut, tmin, lapseRate, elevRaster, daymetRaster)
+            os.system(command)
 
         elif param == "tmax":
             lapseRate = 5.69 # is this the same for tmax?
             tmax = paramRaster
-            call(["r.mapcalc", "%s = %s-(%f/1000*(%s-%s))" % (rasterOut, tmax, lapseRate, elevRaster, daymetRaster) ])
+            command = "r.mapcalc %s = %s-(%f/1000*(%s-%s))" % (rasterOut, tmax, lapseRate, elevRaster, daymetRaster)
+            os.system(command)
+
         else:
             print ("Invalid param type")
 
         # TODO: Add the rest of the equations for each parameter
+        #r.mapcalc f_tmin_loc=0.6108*exp((12.27*tmin_loc)/(tmin_loc+237.3))
+        #r.mapcalc f_tmax_loc=0.6108*exp((12.27*tmax_loc)/(tmax_loc+237.3))
+        #r.mapcalc vp_s=(f_tmax_loc+f_tmin_loc)/2
+        #r.mapcalc PET=(2.1*(hours_sun^2)*vp_s/((tmax_loc+tmin_loc)/2)
 
     #def rPatch(self):

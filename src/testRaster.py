@@ -1,4 +1,5 @@
-from raster import raster
+#!/usr/bin/python
+from raster import *
 
 print "Testing raster constructor using ../dems/brazil.output.mean.tif and myRaster"
 r = raster("../dems/brazil.output.mean.tif", "myRaster")
