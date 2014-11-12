@@ -15,8 +15,8 @@ Different stages of the project:
 
 Data Collection
 ==
-DEM
-OpenTopo: Contains the DEM files which contain latlong points.
+
+OpenTopo: Contains the DEM files which contain latlong points.DEM
 
 Data Storage
 ==
@@ -24,8 +24,8 @@ iPlant/XSEDE
 
 Prepare Data
 ==
-Phase 1: Data will be saved as raster files within the grassdata database specified by the user.
-Phase 2: Data will be stored using iRODS if the user chooses to do so.
+* Phase 1: Data will be saved as raster files within the grassdata database specified by the user.
+* Phase 2: Data will be stored using iRODS if the user chooses to do so.
 
 Distribute computations
 ==
