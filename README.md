@@ -77,91 +77,101 @@ Application Programming Interface
 Our python scripts were written with extensibility in mind.  The current goal is to have other scientists work with and use our scripts to meet their own ends, therefore, we thought it was important to create types that others can use to extend or build upon what we currently offer here.  An overview of the API can be found here: [https://github.com/mhumeSF/ISTA-420-Midterm/tree/master/src]
 Geotiff Class Interface
 ==
-    init(self, tiff):
-    ex: tiff = Geotiff("output.mean.tif")
-    Constructor: Initializes a new geotiff object which instance methods can be called on.
-    This also generates a GRASS raster which is used for subsequent processes. The raster
-    is generated after the geotiff has been warped to the daymet projection and region
-    The constructor takes one argument, a link to a geotiff file.
+init(self, tiff):
+ex: tiff = Geotiff("output.mean.tif")
+Constructor: Initializes a new geotiff object which instance methods can be called on.
+This also generates a GRASS raster which is used for subsequent processes. The raster
+is generated after the geotiff has been warped to the daymet projection and region
+The constructor takes one argument, a link to a geotiff file.
 
-    (Not Used)
-    getCenter(self):
-    ex: center = tiff.getCenter()
-    This method calls gdalinfo on the object's geotiff file.  It parses the 
-    output to save the center coordinates of the geotiff. It outputs a tuple 
-    of the lon, lat center coordinates of the geotiff.
-    
-    getCordinates(self):
-    ex: corners = tiff.getCorners()
-    This method calls gdalinfo on the geotiff file and parses the output to
-    acquire the top left and bottom right corner coordinates. The output is
-    two tuples, the first being the x,y coordinates of the top left corner of the region and the second being the x,y coordinates of the bottom right
-    corner of the region.
-    toDegrees(self, coords): ex: decimal = tiff.toDegrees(center)
-    This method converts coordinates in day,hour,minute,second format to
-    decimal degrees. It takes one argument, a tuple (lat, long) for
-    the conversion. It returns decimal degree values as (lat, long)
+(Not Used)
+getCenter(self):
+ex: center = tiff.getCenter()
+This method calls gdalinfo on the object's geotiff file.  It parses the
+output to save the center coordinates of the geotiff. It outputs a tuple
+of the lon, lat center coordinates of the geotiff.
 
-    (unused)
-    forDaymetR(self, coords, sYear=1980, eYear=2015, param="all", outDir="~/DaymetTiles"):
-    This method generates the os commands necessary to call DaymetR. It takes 
-    one argument; a pair of lat/lon coordinates in the form of a tuple.
-    The first lat/lon values are the top left corner of the selected region
-    and the second two are the bottom left corner of the region. It then
-    makes an os call for DaymetR which grabs tiles using the lat lon values.
-    
-    def toMatrix(self, coords):
-    This method converts coordinates in decimal lat/lon format into the proper
-    format to query the tile number matrix that we have built. It takes one
-    argument, a tuple, which is a pair of lat/lon coordinates and returns the
-    local matrix indices corresponding to the coords. These can be used to 
-    lookup the index of tile IDs.
+getCordinates(self):
+ex: corners = tiff.getCorners()
+This method calls gdalinfo on the geotiff file and parses the output to
+acquire the top left and bottom right corner coordinates. The output is
+two tuples, the first being the x,y coordinates of the top left corner of the region and the second being the x,y coordinates of the bottom right
+corner of the region.
+toDegrees(self, coords): ex: decimal = tiff.toDegrees(center)
+This method converts coordinates in day,hour,minute,second format to
+decimal degrees. It takes one argument, a tuple (lat, long) for
+the conversion. It returns decimal degree values as (lat, long)
 
-    def getTiles(self, coords):
-    This method takes in (UL LR) as a space-delimited coordinates in a tuple and 
-    returns the list of tiles that are contained in this rectangular geographical area.
-    
-    def getTileList(self, indices):
-    This method takes in 2x(i,j) indices and returns a list of tiles that 
-    encompass those indices.
-    
-    def gdalwarp(self, input, output):
-    This method calls gdalwarp on its argument to warp the coordinates of the
-    geotiff file to the new coordinate system. It outputs a geotiff file.
-    The two arguments are filenames to an input geotiff file and an output
-    geotiff file. 
+(unused)
+forDaymetR(self, coords, sYear=1980, eYear=2015, param="all", outDir="~/DaymetTiles"):
+This method generates the os commands necessary to call DaymetR. It takes
+one argument; a pair of lat/lon coordinates in the form of a tuple.
+The first lat/lon values are the top left corner of the selected region
+and the second two are the bottom left corner of the region. It then
+makes an os call for DaymetR which grabs tiles using the lat lon values.
+
+def toMatrix(self, coords):
+This method converts coordinates in decimal lat/lon format into the proper
+format to query the tile number matrix that we have built. It takes one
+argument, a tuple, which is a pair of lat/lon coordinates and returns the
+local matrix indices corresponding to the coords. These can be used to
+lookup the index of tile IDs.
+
+def getTiles(self, coords):
+This method takes in (UL LR) as a space-delimited coordinates in a tuple and
+returns the list of tiles that are contained in this rectangular geographical area.
+
+def getTileList(self, indices):
+This method takes in 2x(i,j) indices and returns a list of tiles that
+encompass those indices.
+
+def gdalwarp(self, input, output):
+This method calls gdalwarp on its argument to warp the coordinates of the
+geotiff file to the new coordinate system. It outputs a geotiff file.
+The two arguments are filenames to an input geotiff file and an output
+geotiff file.
 
 Raster Class Interface
-==
-    init(self, tiff, raster):
-    ex: ras = raster("output.mean.tif", "./raster")
-    Constructor: Initializes a new instance of a raster object and sets
-    the g.region for concurrent raster calculations. It takes two
-    arguments, the first is an input geotiff file, the second is a
-    name for an output raster file.
 
-    (unused)
-    export(self, raster, output):
-    ex: ras.export("output.mean.tif", "./raster")
-    This method exports the raster files using the command r.external and
-    g.region. It takes two arguments, the first is a raster and the second
-    is the name is the geoTiff to output as.
+```
+init(self, tiff, raster):
+ex: ras = raster("output.mean.tif", "./raster")
+```
+Constructor: Initializes a new instance of a raster object and sets
+the g.region for concurrent raster calculations. It takes two
+arguments, the first is an input geotiff file, the second is a
+name for an output raster file.
 
-    slopeAspect(self, elevationRaster, outputSlope, outputAspect):
-    ex: ras.slopeAspect("MyElevRast", "MySlope", "MyAspect")
-    This method calls the r.slope.aspect function from the grass module.
-    It takes three arguments, the first of which is an input elevation raster
-    file, the second is an output name for a slope file and the third is an
-    output name for an aspect file.
+(unused)
+```
+export(self, raster, output):
+ex: ras.export("output.mean.tif", "./raster")
+```
+This method exports the raster files using the command r.external and
+g.region. It takes two arguments, the first is a raster and the second
+is the name is the geoTiff to output as.
 
-    sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
-    ex: ras.sun(myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad)
-    This method calls the r.sun function from the grass module. There are a
-    ton of arguments for it to run properly.
+```
+slopeAspect(self, elevationRaster, outputSlope, outputAspect):
+ex: ras.slopeAspect("MyElevRast", "MySlope", "MyAspect")
+```
+This method calls the r.slope.aspect function from the grass module.
+It takes three arguments, the first of which is an input elevation raster
+file, the second is an output name for a slope file and the third is an
+output name for an aspect file.
 
-    mapCalc(self, param, paramRaster, rasterOut, elevRaster, daymetRaster):
-    ex: ras.mapCalc(tmin, paramRaster, rasterOut, elevRaster, daymetRaster)
-    This method calls the r.mapcalc function from the grass module. Its output
-    is based on which parameter type is specified. Different calculations are
-    done depending on the parameter, currently tmin and tmax.
+```
+sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
+ex: ras.sun(myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad)
+```
+This method calls the r.sun function from the grass module. There are a
+ton of arguments for it to run properly.
+
+```
+mapCalc(self, param, paramRaster, rasterOut, elevRaster, daymetRaster):
+ex: ras.mapCalc(tmin, paramRaster, rasterOut, elevRaster, daymetRaster)
+```
+This method calls the r.mapcalc function from the grass module. Its output
+is based on which parameter type is specified. Different calculations are
+done depending on the parameter, currently tmin and tmax.
 
