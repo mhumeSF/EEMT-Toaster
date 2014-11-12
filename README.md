@@ -14,19 +14,19 @@ Different stages of the project:
 * Visualization - TBD
 
 
-Data Collection
-==
+## Data Collection
+
 DEM
 OpenTopo: Contains the DEM files which contain latlong points.
 
 
-Data Storage
-==
+## Data Storage
+
 iPlant/XSEDE
 
 
-Prepare Data
-==
+## Prepare Data
+
 * Phase 1: Data will be saved as raster files within the grassdata database specified by the user.
 * Phase 2: Data will be stored using iRODS if the user chooses to do so.
 
@@ -34,8 +34,8 @@ Warp Geotiff to LCC projection using gdalwarp
 Import GRASS raster from Geotiff
 
 
-Distribute computations
-==
+## Distribute computations
+
 Actual Implementation:
 WorkQueue : Create workers to run r.sun calculations for each day of the year.
 
@@ -44,26 +44,26 @@ Docker : use it to containerize our apps so that we can run the docker anywhere.
 *UAHPC / PBS distrobution systems* : Currently tested and working.  Script has the ability to distribute tasks in parallel and report back to the user when tasks are complete.
 
 
-Process Data
-==
+## Process Data
+
 GRASS : raster map functions to create solar radiation models and localized temperature models *Future products*
 QGIS : does some calculations related to water slope models and (maybe) make a predictive analysis of weather change.
 EEMT = E_ppt + E_bio (J / (m^2 * s))
 
-Prepare output
-==
+## Prepare output
+
 Output will be staged in the given grassdata database file structure
 
-Output format
-==
+## Output format
+
 Raster maps that are included in the given grassdata database file structure
 
-Visualization
-==
+## Visualization
+
 Under Construction
 
-User Interfaces
-==
+## User Interfaces
+
 Under Construction
 Entry point python script where the user can:
 * specify a folder of geotiff files to work on
@@ -75,8 +75,9 @@ Entry point python script where the user can:
 Application Programming Interface
 ==
 Our python scripts were written with extensibility in mind.  The current goal is to have other scientists work with and use our scripts to meet their own ends, therefore, we thought it was important to create types that others can use to extend or build upon what we currently offer here.  An overview of the API can be found here: [https://github.com/mhumeSF/ISTA-420-Midterm/tree/master/src]
-Geotiff Class Interface
-==
+
+## Geotiff Class Interface
+
 init(self, tiff):
 ex: tiff = Geotiff("output.mean.tif")
 Constructor: Initializes a new geotiff object which instance methods can be called on.
@@ -131,7 +132,7 @@ geotiff file to the new coordinate system. It outputs a geotiff file.
 The two arguments are filenames to an input geotiff file and an output
 geotiff file.
 
-Raster Class Interface
+## Raster Class Interface
 
 ```
 init(self, tiff, raster):
