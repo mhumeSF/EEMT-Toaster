@@ -24,62 +24,43 @@ iPlant/XSEDE
 
 Prepare Data
 ==
-
+Phase 1: Data will be saved as raster files within the grassdata database specified by the user.
+Phase 2: Data will be stored using iRODS if the user chooses to do so.
 
 Distribute computations
 ==
 Docker : use it to containerize our apps so that we can run the docker anywhere.
+*UAHPC / PBS distrobution systems* : Currently tested and working.  Script has the ability to distribute tasks in parallel and report back to the user when tasks are complete.
 
 
 Process Data
 ==
-GRASS : 
-QGIS : does some calculations related to water slope models and (maybe) make a predictive analysis of weather change.
+GRASS : raster map functions to create solar radiation models and localized temperature models
+*Future products*
 EEMT = E_ppt + E_bio (J / (m^2 * s))
 
 Prepare output
 ==
-
+Output will be staged in the given grassdata database file structure
 
 Output format
 ==
-
+Raster maps that are included in the given grassdata database file structure
 
 Visualization
 ==
+Under Construction
 
-
-Geotiff Class Interface
+User Interfaces
 ==
-    init():
-    ex: tiff = Geotiff("output.mean.tif")
-    Initializes a new geotiff object.
-    Takes one argument, a link to a geotiff file.
+Under Construction
+Entry point python script where the user can:
+* specify a folder of geotiff files to work on
+* specify a range of years to work on
+* specify parameters to calculate EEMT (Tmin, Tmax, swe, dayl, etc..)
+* specify a time step to use
+* specify monthly averages or daily averages
 
-    Unnecessary???
-    getCenter():
-    ex: center = tiff.getCenter()
-    This method calls gdalinfo on the object's geotiff file.  It parses the 
-    output to save the center coordinates of the geotiff. It outputs a tuple 
-    of the lon, lat center coordinates of the geotiff.
-    
-    getCordinates():
-    ex: corners = tiff.getCorners()
-    This method calls gdalinfo on the geotiff file and parses the output to
-    acquire the top left and bottom right corner coordinates. The output is
-    two tuples, the first being the x,y coordinates of the top left corner
-    of the region and the second being the x,y coordinates of the bottom right
-    corner of the region.
-    
-    toDegrees():
-    ex: decimal = tiff.toDegrees(center)
-    This method converts coordinates in day,hour,minute,second format to
-    decimal degrees. It takes one argument, a tuple (lat, long) for
-    the conversion. It returns decimal degree values as (lat, long)
-
-    gdalwarp():
-    ex: warped = tiff.gdalwarp(...)
-    This method warps the geotiff object into the coordinate system
-    specified as and argument. The method 
-
-
+Application Programming Interface
+==
+Our python scripts were written with extensibility in mind.  The current goal is to have other scientists work with and use our scripts to meet their own ends, therefore, we thought it was important to create types that others can use to extend or build upon what we currently offer here.  An overview of the API can be found here: [https://github.com/mhumeSF/ISTA-420-Midterm/tree/master/src]
