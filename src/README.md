@@ -41,18 +41,18 @@ Takes one argument, a link to a geotiff file.
 
 ```
 getCenter():
+ex: center = tiff.getCenter()
 ```
 
-ex: center = tiff.getCenter()
 This method calls gdalinfo on the object's geotiff file.  It parses the 
 output to save the center coordinates of the geotiff. It outputs a tuple 
 of the lon, lat center coordinates of the geotiff.
 
 ```
 getCordinates():
+ex: corners = tiff.getCorners()
 ```
 
-ex: corners = tiff.getCorners()
 This method calls gdalinfo on the geotiff file and parses the output to
 acquire the top left and bottom right corner coordinates. The output is
 two tuples, the first being the x,y coordinates of the top left corner
@@ -61,18 +61,18 @@ corner of the region.
 
 ```
 toDegrees(coords):
+ex: decimal = tiff.toDegrees(center)
 ```
 
-ex: decimal = tiff.toDegrees(center)
 This method converts coordinates in day,hour,minute,second format to
 decimal degrees. It takes one argument, a tuple (lat, long) for
 the conversion. It returns decimal degree values as (lat, long)
 
 ```
 toMatrix()
+ex: 
 ```
 
-ex: 
 This method converts coordinates in decimal lat/lon format into the proper 
 format to query the tile number matrix that we have built. It takes one
 argument, a tuple, which is a pair of lat/lon coordinates and returns the
@@ -83,20 +83,17 @@ lookup the index of tile IDs.
 getTiles(coords)
 ```
 
-This method takes in (UL LR) as a space-delimited coordinates in a tuple and 
-    returns the list of tiles that are contained in this rectangular geographical area.
+This method takes in (UL LR) as a space-delimited coordinates in a tuple and  returns the list of tiles that are contained in this rectangular geographical area.
 
 ```
 getTileList(indicies)
 ```
 
-This method takes in 2x(i,j) indices and returns a list of tiles that 
-    encompass those indices.
+This method takes in 2x(i,j) indices and returns a list of tiles that encompass those indices.
     
 ```
 gdalwarp():
 ex: warped = tiff.gdalwarp(...)
 ```
 
-This method warps the geotiff object into the coordinate system
-specified as and argument. The method 
+This method warps the geotiff object into the coordinate system specified as and argument. The method 
