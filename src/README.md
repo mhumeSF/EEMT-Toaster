@@ -1,4 +1,4 @@
-##class raster
+## Raster Class Interface
 
 ```
 init(tiff, raster)
@@ -30,7 +30,7 @@ mapcalc(param, paramRaster, rasterOut, elevRaster, daymetRaster)
 
 This method calls the r.mapcalc function from the grass module. Its output is based on which parameter type is specified. Different calculations are done depending on the parameter
 
-##class geotiff
+## GeoTiff Class Interface
 ```
 init():
 ex: tiff = Geotiff("output.mean.tif")
