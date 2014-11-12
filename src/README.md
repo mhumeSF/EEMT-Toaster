@@ -1,68 +1,74 @@
-### paramcalc.py
+##class raster
 
-##### Usage:
+####init(tiff, raster)
+This initializes a new instance of a raster object and sets
+    the g.region for concurrent raster calculations. It takes two
+    arguments, the first is an input geotiff file, the second is a
+    name for an output raster file.
 
-	$ python paramcalc param=tmin paramValue=$tmin rasterout=tmin_loc elevationRaster=sosierra_warp daymetRaster=na_dem
+####export(raster, output)
+This exports the raster files using the command r.external and
+    g.region. It takes two arguments, the first is a raster and the second
+        is the name of the geoTiff to output as.
+        
+####slopeAspect(elevationRaster,slope,aspect)
+This method calls the r.slope.aspect function from the grass module.
+    It takes three arguments, the first of which is an input elevation raster
+    file, the second is an output name for a slope file and the third is an
+    output name for an aspect file.
 
-##### Inputs:
-- **param** is the daymet data type we’ll be working on: param=tmin, tmax, swe, vp, day
-- **rasterout** is the name of the file that will contain the output raster.
-- **elevationRaster** is the raster map of the openTopo data being worked on.
-- **daymetRaster** is the raster map of the 1KM daymet dem (na_dem).
+####sun(myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad)
+This method calls the r.sun function from the grass module. There are a
+    ton of arguments for it to run properly.
 
-##### Description:
-The idea is to resume this script for each of the parameter calculations we need to make. This script if written correctly, will work for every piece of daymet data obtained from the CSV file.
+####mapcalc(param, paramRaster, rasterOut, elevRaster, daymetRaster)
+ This method calls the r.mapcalc function from the grass module. Its output
+    is based on which parameter type is specified. Different calculations are
+    done depending on the parameter
 
+##class geotiff
+####init():
+ex: tiff = Geotiff("output.mean.tif")
+Initializes a new geotiff object.
+Takes one argument, a link to a geotiff file.
 
+####getCenter():
+ex: center = tiff.getCenter()
+This method calls gdalinfo on the object's geotiff file.  It parses the 
+output to save the center coordinates of the geotiff. It outputs a tuple 
+of the lon, lat center coordinates of the geotiff.
 
-### slopeaspect.py
+####getCordinates():
+ex: corners = tiff.getCorners()
+This method calls gdalinfo on the geotiff file and parses the output to
+acquire the top left and bottom right corner coordinates. The output is
+two tuples, the first being the x,y coordinates of the top left corner
+of the region and the second being the x,y coordinates of the bottom right
+corner of the region.
 
-##### Usage:
+####toDegrees(coords):
+ex: decimal = tiff.toDegrees(center)
+This method converts coordinates in day,hour,minute,second format to
+decimal degrees. It takes one argument, a tuple (lat, long) for
+the conversion. It returns decimal degree values as (lat, long)
 
-	$ python slopeaspect.py elevationRaster=sosierra_warp slope=slop aspect=aspect
+####toMatrix()
+ex: 
+This method converts coordinates in decimal lat/lon format into the proper 
+format to query the tile number matrix that we have built. It takes one
+argument, a tuple, which is a pair of lat/lon coordinates and returns the
+local matrix indices corresponding to the coords. These can be used to 
+lookup the index of tile IDs.
 
-##### Inputs:
-- **elevationRaster** is the raster map obtained by OpenTopo that we’re currently working on
-- **slope** is the slope raster outfile
-- **aspect** is the aspect raster outfield
+####getTiles(coords)
+This method takes in (UL LR) as a space-delimited coordinates in a tuple and 
+    returns the list of tiles that are contained in this rectangular geographical area.
 
-##### Description:
-This will simply call r.slope.aspect and out slope and aspect rasters for r.sun
-
-
-### importraster.py
-
-##### Usage:
-
-	$ python importraster.py input=geoTiff output=raster
-
-##### Inputs:
-- **input** The input geoTiff to be used for concurrent calculations
-- **output** The name of the raster file to output (use this as the input to sun, paramcalc etc)
-
-##### Description:
-Creates a raster file and sets the g.region for Concurrent raster calculations
-
-
-
-### sun.py
-
-##### Usage:
-
-	$ python sun.py elevationRaster=elevationRaster slope=slope aspect=aspect day=day step=step beam_rad=beam_rad insol_time=insol_time diff_rad=diff_rad refl_rad=refl_rad glob_rad=glob_rad
-
-##### Inputs:
-- **elevationRaster** the OpenTopo elevation raster
-- **slope** slope input from previous
-- **aspect** aspect input from previous
-- **day** current day we’re working on
-- **step** time step (this is in hours so Tysonsiad 0.05 is about every 4 minutes)
-- **beam_rad** beam_rad raster outfile
-- **insol_time** sol_time raster outfile
-- **refl_rad** refl_rad outfile
-- **glob_rad** glob_rad outfile
-
-##### Description:
-Ok, this is essentially the heart of the project. The loop to run this script is going to have to come from outside so it can be parallelized. The input parameters are fairly simple — the slope and aspect models obtained from slopeaspect.py, the day in which to work on and the step value. Also the out files (I don’t know if tyson needs all of these, but he included them  in his guy example, so we’re going to include them) beam_rad, insol_time, diff_rad, refl_rad and glob_rad. I believe these are all different kinds of radiation maps. I’m going to leave Tyson’s example below for reference purposes.
-
-	r.sun elevin=tmp1414703925037 aspin=tmp1414703925038 slopein=tmp1414703925039 day="1" step="0.5" declin="0" dist="1" ­-s beam_rad=beam_rad7a3de19caf71412e9703e50b15d252d7 insol_time=insol_time7a3de19caf71412e9703e50b15d252d7 diff_rad=diff_rad7a3de19caf71412e9703e50b15d252d7 refl_rad=refl_rad7a3de19caf71412e9703e50b15d252d7 glob_rad=glob_rad7a3de19caf71412e9703e50b15d252d7 ­­overwrite
+####getTileList(indicies)
+This method takes in 2x(i,j) indices and returns a list of tiles that 
+    encompass those indices.
+    
+####gdalwarp():
+ex: warped = tiff.gdalwarp(...)
+This method warps the geotiff object into the coordinate system
+specified as and argument. The method 
