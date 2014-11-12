@@ -66,7 +66,7 @@ Under Construction
 
 Under Construction
 Entry point python script where the user can:
-* specify a folder of geotiff files to work on
+* specify a geotiff or a folder of geotiff files to work on
 * specify a range of years to work on
 * specify parameters to calculate EEMT (Tmin, Tmax, swe, dayl, etc..)
 * specify a time step to use
