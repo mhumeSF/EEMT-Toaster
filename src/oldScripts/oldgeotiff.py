@@ -17,6 +17,59 @@ class geotiff:
             print("No valid geotiff file specified, exiting...")
 
 
+    def getCenter(self):
+    """
+    !UNUSED METHOD! This method calls gdalinfo on the object's geotiff file.
+    It parses the output to save the center coordinates of the geotiff.
+    It outputs a tuple of the lon, lat center coordinates of the geotiff.
+    """
+        #generate command for os
+        command = ("gdalinfo " + self.tiff)
+        #try to run gdalinfo command
+        try:
+            info = subprocess.check_output(command, shell = True)
+            #search for center coordinates in output of gdalinfo
+            match = re.search('Center(.*)', info)
+
+            #if center is found
+            if match:
+                #save match as string
+                center_str = match.group()
+                #make list of results
+                coords_list = center_str.split('(')
+                #if the list has 3 elements (assuming proper gdalinfo output format)
+                if len(coords_list) == 3:
+                    #save Center values(assumed to be 3rd item)
+                    lonlat = coords_list[2]
+                    #split them on the comma
+                    lon_lat = lonlat.split(',')
+                    #if the length of the resulting list is 2
+                    if len(lon_lat) == 2:
+                        #save lon/lat values
+                        lon = lon_lat[0].lower()
+                        lat = lon_lat[1][:-1].lower()
+                        #append (-)'s for S and W lon/lat values
+                        if lat[-1] == 's':
+                            lat = '-' + lat[:-1].strip()
+                        #remove N,S,E,W letters from strings
+                        else:
+                            lat = lat[:-1].strip()
+                        if lon[-1] == 'w':
+                            lon = '-' + lon[:-1].strip()
+                        else:
+                            lon = lon[:-1].strip()
+                        #return the longitude and latitude values as tuple
+                        return (lat , lon)
+                    else:
+                        print("Improper lon/lat format in geotiff file")
+                else:
+                    print("Improper center coordinate format in geotiff file")
+            else:
+                print("Could not find center coordinates in gdal output")
+        except:
+            print("Invalid geotiff file")
+
+
     def getCoordinates(self):
     """
     This method calls gdalinfo on the geotiff file and parses the output to
@@ -32,10 +85,12 @@ class geotiff:
             info = subprocess.check_output(command, shell = True)
             
             # This is a static set of lat/longs for testing purposes
-            # info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) 			( 80d44'29.28\"W, 25d24'56.39\"N)"
+            # info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) ( 80d44'29.28\"W, 25d24'56.39\"N)"
             #search for center coordinates in output of gdalinfo
             UL = re.search('Upper Left(.*)', info)
             LR = re.search('Lower Right(.*)', info)
+
+            # print(UL.group(), LR.group())
 
             #if center is found
             if UL and LR:
@@ -65,14 +120,41 @@ class geotiff:
                         LRlat = LR[1][:-1].lower().strip()
 
                         #append (-)'s for S and W lon/lat values
-                        #remove N,S,E,W letters from strings                        
+                        #remove N,S,E,W letters from strings
+                        """
+                        if ULlat[-1] == 's':
+                            ULlat = '-' + ULlat[:-1]
+                        else:
+                            ULlat = ULlat[:-1]
+
+                        if ULlon[-1] == 'w':
+                            ULlon = '-' + ULlon[:-1]
+                        else:
+                            ULlon = UL[:-1]
+
+                        #print("changed upper left s's and w's")
+                        if LRlat[-1] == 's':
+                            LRlat = '-' + LRlat[:-1]
+                        else:
+                            LRlat = LRlat[:-1]
+
+                        if LRlon[-1] == 'w':
+                            LRlon = '-' + LRlon[:-1]
+                        else:
+                            LRlon = LRlon[:-1]
+                        """
+                        
                         for coord in [ULlon, ULlat, LRlon, LRlat]:
                             if coord[-1] in ['s', 'w']:
                                 coord = '-' + coord[:-1]
                             else:
                                 coord = coord[:-1]
-                        
+                                
+                        #print("changed lower rights s's and w's")
                         #return the longitude and latitude values as tuple
+
+                        # print ((ULlat, ULlon), (LRlat, LRlon))
+
                         return ((ULlat, ULlon), (LRlat, LRlon))
 
                     else:
@@ -117,6 +199,39 @@ class geotiff:
             print("Improper lat/lon tuple provided as argument to GeoConvert")
 
 
+    def forDaymetR(self, coords, sYear=1980, eYear=2015, param="all", outDir="~/DaymetTiles"):
+    """
+    This method generates the os commands necessary to call DaymetR. It takes 
+    one argument; a pair of lat/lon coordinates in the form of a tuple.
+    The first lat/lon values are the top left corner of the selected region
+    and the second two are the bottom left corner of the region. It then
+    makes an os call for DaymetR which grabs tiles using the lat lon values.
+    """
+        if coords:
+            #((lat, lon),(lat, lon))
+            #parse lat/lon values from input tuples
+            print("Coords = " + str(coords))
+            UL = coords[0]
+            LR = coords[1]
+            #generate os command
+            command = "Rscript ./Daymet_tiles.R %s %s %d %d %s %s" \
+                    % (UL, LR, sYear, eYear, param, outDir)
+            #if the output directory doesn't exist, create it
+            if not os.path.exists(outDir):
+                os.makedirs(outDir)
+            """
+            command = "Rscript ./Daymet_tiles.R %s %s %s %s %d %d %s %s" \
+                    % (ULlat, ULlon, LRlat, LRlon, sYear, eYear, param, outDir)
+            """  
+            #print(command)   
+            try:
+                subprocess.check_output(command, shell = True)
+            except:
+                print("DaymetR command failed, try again!")
+        else:
+            print("No coordinates supplied for DaymetR")
+
+
     def toMatrix(self, coords):
     """
     This method converts coordinates in decimal lat/lon format into the proper
@@ -140,13 +255,15 @@ class geotiff:
 
     def getTiles(self, coords):
     """
-    This method takes in (UL LR) as a tuple and returns the list of tiles 
-    that are contained in this rectangular geographical area.
+    This method takes in (UL LR) as a space-delimited coordinates in a tuple and 
+    returns the list of tiles that are contained in this rectangular geographical area.
     """
         if coords and len(coords) == 2:
             UL = self.toMatrix(coords[0].split())
             LR = self.toMatrix(coords[1].split())
-
+            # if (UL == LR):
+            #     return TileIdMatrix[UL[0]][UL[1]]
+            # else:
             return self.getTileList ([UL,LR])
 
 
@@ -159,6 +276,9 @@ class geotiff:
         j1 = min(indices[0][1], indices[1][1])
         i2 = max(indices[0][0], indices[1][0])
         j2 = max(indices[0][1], indices[1][1])
+ 
+        # print (i1, j1)
+        # print (i2, j2)
 
         tiles = []
 

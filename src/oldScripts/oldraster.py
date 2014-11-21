@@ -16,12 +16,10 @@ class raster:
             self.tiff = tiff
             warped = tiff + ".warped"
             self.output = raster
-
             try:
                 #r.external(input=self.tiff, output=self.output)
                 os.system("gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear -multi -dstnodata 0 -of GTiff %s %s" % (tiff, warped))
                 call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
-
             except:
                 print("r.external failed to generate raster file "
                         + "with specified input/output names "
@@ -30,8 +28,8 @@ class raster:
             try:
                 #g.region(rast=self.output)
                 os.system("g.region rast=%s" % (self.output))
-            
-	    except:
+
+            except:
                 print("g.region failed to generate output raster file "
                         + "with specified name: " + self.output)
         else:
@@ -46,8 +44,7 @@ class raster:
     """
         try:
             os.system("r.out.gdal input=%s output=%s" % (raster, output))
-        
-	except:
+        except:
             print("r.in.gdal failed to generate your geoTif")
 
                 #r.external(input=myInput, output=myOutput)
@@ -61,6 +58,14 @@ class raster:
     output name for an aspect file.
     """
         try:
+            # call r.slope.aspect
+            # slope_aspect = Module("r.slope.aspect")
+            # slope_aspect(elevation=elevationRaster,
+            # slope=outputSlope,
+            # aspect=outputAspect,
+            # format='degrees',
+            # overwrite=True)
+
             command = "r.slope.aspect" \
                 + " elevation=" + elevationRaster \
                 + " slope=" + outputSlope \
@@ -79,6 +84,23 @@ class raster:
     ton of arguments for it to run properly.
     """
         try:
+            # call r.sun
+            #   r.sun(
+            #   elevationRaster=myElevationRaster,
+            #   slope=mySlope,
+            #   aspect=myAspect,
+            #   day=myDay,
+            #   step=myStep,
+            #   declin="0",
+            #   dist="1",
+            #   beam_rad=myBeam_rad,
+            #   insol_time=myInsol_time,
+            #   diff_rad=myDiff_rad,
+            #   refl_rad=myRefl_rad,
+            #   glob_rad=myGlob_rad,
+            #   flags="s",
+            #   overwrite=true
+            #   )
             command = (
                 "r.sun " + \
                 " elevin=" + myElevRaster + \
