@@ -6,6 +6,9 @@ from raster import *
 from datetime import date
 
 def is_tiff_file (filename):
+    """
+    Returns True if the argument exists as a file and is a valid TIFF file
+    """
     return os.path.isfile(filename) and "TIFF" in subprocess.check_output("file " + filename, shell=True)
 
 def main ():

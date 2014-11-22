@@ -1,3 +1,13 @@
+## Start Here
+starthere.py : This script takes a bunch of params, years, filenames as arguments in any insane order and tries to make sense of what they are and use them somehow. 
+```
+./starthere.py 1525 ../dems/cali.output.mean.tif tmin tmax 8965 ../dems/florida.output.mean.tif -9556    2011      eer ../dems/brazil.output.mean.tiff
+                ^                ^                ^     ^    ^             ^                       ^       ^        ^          ^
+            invalid yr        valid tif file   valid params  invalid     valid tiff file         inv    valid      junk     invalid file
+```
+
+This script also contains "is_tiff_file(filename)" function which returns True if the argument exists as a file and is a valid TIFF file.
+
 ## Raster Class Interface
 
 ```
