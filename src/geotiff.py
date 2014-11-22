@@ -5,10 +5,10 @@ from grid import *
 class geotiff:
 
     def __init__(self, tiff = None):
-    """
-    Initializes a new geotiff object.
-    Takes one argument, a link to a geotiff file.
-    """
+        """
+        Initializes a new geotiff object.
+        Takes one argument, a link to a geotiff file.
+        """
         if not tiff:
             tiff = raw_input("Input path to geotiff file: ")
         try:
@@ -18,13 +18,13 @@ class geotiff:
 
 
     def getCoordinates(self):
-    """
-    This method calls gdalinfo on the geotiff file and parses the output to
-    acquire the top left and bottom right corner coordinates. The output is
-    two tuples, the first being the x,y coordinates of the top left corner
-    of the region and the second being the x,y coordinates of the bottom right
-    corner of the region.
-    """
+        """
+        This method calls gdalinfo on the geotiff file and parses the output to
+        acquire the top left and bottom right corner coordinates. The output is
+        two tuples, the first being the x,y coordinates of the top left corner
+        of the region and the second being the x,y coordinates of the bottom right
+        corner of the region.
+        """
         #generate command for os
         command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
@@ -86,11 +86,11 @@ class geotiff:
 
 
     def toDegrees(self, coords):
-    """
-    This method converts coordinates in day,hour,minute,second format to
-    decimal degrees. It takes one argument, a tuple (lat, lon) for
-    the conversion. It returns decimal degree values as (lat, lon)
-    """
+        """
+        This method converts coordinates in day,hour,minute,second format to
+        decimal degrees. It takes one argument, a tuple (lat, lon) for
+        the conversion. It returns decimal degree values as (lat, lon)
+        """
         if coords:
             # prin(coords)
             if len(coords) == 2:
@@ -118,13 +118,13 @@ class geotiff:
 
 
     def toMatrix(self, coords):
-    """
-    This method converts coordinates in decimal lat/lon format into the proper
-    format to query the tile number matrix that we have built. It takes one
-    argument, a tuple, which is a pair of lat/lon coordinates and returns the
-    local matrix indices corresponding to the coords. These can be used to 
-    lookup the index of tile IDs.
-    """
+        """
+        This method converts coordinates in decimal lat/lon format into the proper
+        format to query the tile number matrix that we have built. It takes one
+        argument, a tuple, which is a pair of lat/lon coordinates and returns the
+        local matrix indices corresponding to the coords. These can be used to 
+        lookup the index of tile IDs.
+        """
         if coords and len(coords) == 2:
             #get lat/lon coords from arg
             lat = float(coords[0])
@@ -139,10 +139,10 @@ class geotiff:
 
 
     def getTiles(self, coords):
-    """
-    This method takes in (UL LR) as a tuple and returns the list of tiles 
-    that are contained in this rectangular geographical area.
-    """
+        """
+        This method takes in (UL LR) as a tuple and returns the list of tiles 
+        that are contained in this rectangular geographical area.
+        """
         if coords and len(coords) == 2:
             UL = self.toMatrix(coords[0].split())
             LR = self.toMatrix(coords[1].split())
@@ -151,10 +151,10 @@ class geotiff:
 
 
     def getTileList(self, indices):
-    """
-    This method takes in 2x(i,j) indices and returns a list of tiles that 
-    encompass those indices.
-    """
+        """
+        This method takes in 2x(i,j) indices and returns a list of tiles that 
+        encompass those indices.
+        """
         i1 = min(indices[0][0], indices[1][0])
         j1 = min(indices[0][1], indices[1][1])
         i2 = max(indices[0][0], indices[1][0])
@@ -172,18 +172,18 @@ class geotiff:
 
 
     def gdalwarp(self, input, output):
-    """
-    This method calls gdalwarp on its argument to warp the coordinates of the
-    geotiff file to the new coordinate system. It outputs a geotiff file.
-    The two arguments are filenames to an input geotiff file and an output
-    geotiff file. 
-    """ 
-	    command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
-		 \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 \
-		   +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear \
-		   -multi -dstnodata 0 -of input output"
-	    try:
-	        info = subprocess.check_output(command, shell = True)
-            	return output
-	    except:
-	        print("Gdalwarp command failed")
+        """
+        This method calls gdalwarp on its argument to warp the coordinates of the
+        geotiff file to the new coordinate system. It outputs a geotiff file.
+        The two arguments are filenames to an input geotiff file and an output
+        geotiff file. 
+        """ 
+        command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
+                \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 \
+                +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear \
+                -multi -dstnodata 0 -of input output"
+        try:
+            info = subprocess.check_output(command, shell = True)
+            return output
+        except:
+            print("Gdalwarp command failed")

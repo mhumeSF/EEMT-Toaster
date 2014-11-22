@@ -4,10 +4,10 @@ class netcdf:
         self.rasters = []
 
 
-    """
-    This be where I use that wet get command to grab images off the intertubes
-    """
     def getNetcdf(self, year, tileId):
+        """
+        This be where I use that wet get command to grab images off the intertubes
+        """
         command = "wget http://thredds.daac.ornl.gov/thredds/fileServer/ornldaac/1219/tiles/" \
                     + year + "/" + tileid + "_" + year + "/" + param + ".nc"
         try:
@@ -16,10 +16,10 @@ class netcdf:
             print "netcdf command did not complete"
 
 
-    """
-    I patch all the rasters
-    """
     def rasterPatch(self, outputRaster):
+        """
+        I patch all the rasters
+        """
         myRasterInput = " ".join(self.rasters)
         command = "r.patch " + myRasterInput + " " + outputRaster
 
