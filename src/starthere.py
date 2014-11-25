@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 
 import sys, os, subprocess
+from netcdf import *
 from geotiff import *
 from raster import *
 from datetime import date
@@ -53,6 +54,8 @@ def main ():
     if len(params_to_use) == 0:
         params_to_use = possible_params
 
+    netcdfs = []
+
     for tiff in tiff_files:
         print ("Processing: " + tiff)
         locn = geotiff(tiff)
@@ -61,9 +64,10 @@ def main ():
         tile_list = locn.getTiles (degrees)
         print tile_list
 
-        # for tile in tile_list:
-        #     for param in params_to_use:
-        #         tile.getNetcdf(tile, param)
+        for param in params_to_use:
+            for year in years:
+                cdffile = netcdf(year, tile_list, param)
+                netcdfs.append(cdffile)
 
 if __name__ == "__main__":
     main()

@@ -112,3 +112,4 @@ target/
 
 dems/na_dem*
 grassdata
+*.nc
