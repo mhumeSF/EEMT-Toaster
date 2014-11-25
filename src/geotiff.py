@@ -143,30 +143,32 @@ class geotiff:
         This method takes in (UL LR) as a tuple and returns the list of tiles 
         that are contained in this rectangular geographical area.
         """
+	#if two command line arguments are specified
         if coords and len(coords) == 2:
+	    #parse them as a pair of lat/long values coresponding to the 
+	    #upper left and lower right of the region
+	    #then convert the format to matrix indices
             UL = self.toMatrix(coords[0].split())
             LR = self.toMatrix(coords[1].split())
 
-            return self.getTileList ([UL,LR])
+	#save the matrix indices individually, 0's are lats, 1's are longs
+        i1 = min(UL[0], LR[0])
+        j1 = min(UL[1], LR[1])
+        i2 = max(UL[0], LR[0])
+        j2 = max(UL[1], LR[1])
 
-
-    def getTileList(self, indices):
-        """
-        This method takes in 2x(i,j) indices and returns a list of tiles that 
-        encompass those indices.
-        """
-        i1 = min(indices[0][0], indices[1][0])
-        j1 = min(indices[0][1], indices[1][1])
-        i2 = max(indices[0][0], indices[1][0])
-        j2 = max(indices[0][1], indices[1][1])
-
+	#create empty list for tile IDs to go
         tiles = []
 
+	#iterate through all i-indices
         for i in range(i1, i2 + 1):
+	    #iterate through all j-indices
             for j in range(j1, j2 + 1):
+		#get the tile ID for that i,j index and append it to the list
                 tile = TileIdMatrix[i][j]
                 if tile > 0 :
                     tiles.append(tile)
+	#return the list of tiles
         print ("Number of tiles: %d") % len(tiles)
         return tiles
 

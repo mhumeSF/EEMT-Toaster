@@ -1,5 +1,11 @@
 #/usr/bin/python
 
+"""
+This file contains the matrix of tile IDs for North America. This file is used by geotiff.py. Real world coordinates are used to
+return a tile ID to pull information from Daymet. The indexing of this matrix is based on an algorithm developed by Mike and Stephen so that
+real world coordinates coorespond to their appropriate tile ID.
+"""
+
 TileIdMatrix = [
  [00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 9405, 9404, 9403, 9402, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000],
  [00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 9587, 9586, 9585, 9584, 9583, 9582, 9581, 9580, 9579, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000, 00000],
