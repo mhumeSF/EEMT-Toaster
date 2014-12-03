@@ -1,0 +1,45 @@
+doctype
+head
+  title Erm... hi
+  link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+
+body(style="margin-top:50px")
+  //- Might need more waffles
+  .container
+    .row
+      .col-md-12
+        img(class="pull-right" src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/As_seen_on_TV.svg/220px-As_seen_on_TV.svg.png" width="100")
+        h1 EEMT Toaster&reg;
+        p Tired of baking your own EEMT calculations? Our nifty EEMT Toaster&reg; eoes the baking for you. Results takes seconds!
+        hr
+
+        form(name="eemt", class="form-horizontal", role="form")
+          .form-group
+            label(class="control-label col-sm-2") Files to upload
+            .col-sm-10
+              input(type="file", class="form-control ")
+
+          .form-group
+            label(class="control-label col-sm-2") DEM Resolution
+            label(class="radio-inline") 1k
+              input(type="radio", name="demREZ", value="1000")
+            label(class="radio-inline") 100m
+              input(type="radio", name="demREZ", value="100")
+            label(class="radio-inline") 10m
+              input(type="radio", name="demREZ", value="10")
+            label(class="radio-inline") 1m
+              input(type="radio", name="demREZ", value="1")
+
+          .form-group
+            label(class="control-label col-sm-2") Resolution of TMIN, TMAX...
+            label(class="radio-inline") 1k
+              input(type="radio", name="valREZ", value="1000")
+            label(class="radio-inline") 100m
+              input(type="radio", name="valREZ", value="100")
+            label(class="radio-inline") 10m
+              input(type="radio", name="valREZ", value="10")
+            label(class="radio-inline") 1m
+              input(type="radio", name="valREZ", value="1")
+
+
+
