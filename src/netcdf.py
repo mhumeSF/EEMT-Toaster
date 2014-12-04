@@ -11,6 +11,12 @@ class netcdf:
         for tile in tiles:
             self.rasters.append( str(param) + "_" + str(year) + "_" + str(tile) )
         
+        #set the projection and clear up g:
+        command = "g.proj -c proj4=\"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\""
+        os.system(command)
+        #clear up
+        os.system("g.mremove \"*\"")
+        
         self.getNetcdf()
         self.toRaster()
         self.rasterPatch()
@@ -36,16 +42,33 @@ class netcdf:
         """
         I patch all the rasters
         """
-        myRasterInput = ",".join(self.rasters)
-        myRasterOutput = str(self.param) + "_" + str(self.year) + "_patched"
-        command = "g.region rast=" + myRasterInput
-        # print command
-        command = "r.patch input=" + myRasterInput + " output=" + myRasterOutput + " --overwrite"
-        # print command
+        rastersWithDay = []
+        for raster in self.rasters:
+            rastersWithDay.append(raster + ".1")
+        
+        myRegionInput = ",".join(rastersWithDay)
+        myRasterOutput = str(self.param) + "_" + str(self.year)
+        
+        command = "g.region rast=" + myRegionInput
+        
         try:
-                    os.system(command)
+            os.system(command)
         except:
             print "rasterPatch command did not complete"
+		
+        for i in range(1,366):
+            rasterWithDay = []
+            for raster in self.rasters:
+                rasterWithDay.append( raster + "." + str(i) )
+            
+            myRasterInput = ",".join(rasterWithDay)
+            command = "r.patch input=" + myRasterInput + " output=" + myRasterOutput + "." + str(i) + " --overwrite"
+            #print command
+            #patched raster outputs will be "param_year.day"
+            try:
+                os.system(command)
+            except:
+                print "rasterPatch command did not complete"
         
         self.patchRaster = myRasterOutput
 
@@ -54,11 +77,13 @@ class netcdf:
             command = "r.external -o input=" + raster + ".nc" + " output=" + raster +" --overwrite"
             # print command
             try:
+				# this will create a raster for each band (or day in this case) within the netcdf input.
+				# each band is seperated by a period. ie. "tmin_1980_11369.365"
                 os.system(command)
             except:
                 print "toraster command did not complete"
         #gdal_translate -of GTiFF NETCDF:tmin.nc -b 365 myAwesomeNetCDF
-        return
+        return 
 
     # netcdf_raster_year_day_a
     # netcdf_raster_year_day_b
