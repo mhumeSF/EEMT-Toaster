@@ -20,6 +20,14 @@ body(style="margin-top:50px")
               input(type="file", class="form-control ")
 
           .form-group
+            label(class="control-label col-sm-2") HPC
+            .col-sm-10
+              label(class="checkbox-inline") HPC
+                input(type="checkbox", name="cluster", value="HPC")
+              label(class="checkbox-inline") FutureGrid
+                input(type="checkbox", name="cluster", value="FutureGrid")
+
+          .form-group
             label(class="control-label col-sm-2") DEM Resolution
             label(class="radio-inline") 1k
               input(type="radio", name="demREZ", value="1000")
