@@ -1,4 +1,4 @@
 Run on webserver
 ```
-WEBNOW='python -m SimpleHTTPServer'
+python -m SimpleHTTPServer
 ```
