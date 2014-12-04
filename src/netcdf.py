@@ -3,7 +3,13 @@
 import os, sys
 
 class netcdf:
+
     def __init__(self, year, tiles, param):
+	"""
+	This constructor initializes a new instance of a netcdf object. The constructor
+	takes three arguments, a year, a list of tiles, and a parameter. It then calls all
+	of the instance methods on the current object. It is a main method of sorts.
+	"""
         self.year = year
         self.tiles = tiles
         self.param = param
@@ -21,9 +27,12 @@ class netcdf:
         self.toRaster()
         self.rasterPatch()
 
+
     def getNetcdf(self):
         """
-        This be where I use that wet get command to grab images off the intertubes
+        This method uses wget to acquire netCdf files from the thredds file server. It gets a netCdf for each tile 
+	and downloads them all into the local path. If a file with the same name is found in the current directory,
+	downloading of the file is skipped assuming that the file has already been downloaded.
         """
         for tile in self.tiles: 
             filename = self.param + "_" + str(self.year) + "_" + str(tile) + ".nc" 
@@ -38,9 +47,11 @@ class netcdf:
             except: 
                 print "netcdf command did not complete"
 
+
     def rasterPatch(self):
         """
-        I patch all the rasters
+        This method uses r.patch to patch all the raster files together.
+	The output will be raster files formatted "param_year.day"
         """
         rastersWithDay = []
         for raster in self.rasters:
@@ -56,6 +67,7 @@ class netcdf:
         except:
             print "rasterPatch command did not complete"
 		
+	# iterate through all days of the year
         for i in range(1,366):
             rasterWithDay = []
             for raster in self.rasters:
@@ -72,16 +84,19 @@ class netcdf:
         
         self.patchRaster = myRasterOutput
 
+
     def toRaster(self):
+	"""
+	This method uses the r.external command to convert .nc files to raster files. It creates a new raster
+	for each day (band) within the netcdf input. Each band is separated by a period ie. "tmin_1980_11369.365".
+	"""
         for raster in self.rasters:
             command = "r.external -o input=" + raster + ".nc" + " output=" + raster +" --overwrite"
             # print command
             try:
-				# this will create a raster for each band (or day in this case) within the netcdf input.
-				# each band is seperated by a period. ie. "tmin_1980_11369.365"
                 os.system(command)
             except:
-                print "toraster command did not complete"
+                print "toRaster command did not complete"
         #gdal_translate -of GTiFF NETCDF:tmin.nc -b 365 myAwesomeNetCDF
         return 
 
