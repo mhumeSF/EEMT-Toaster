@@ -50,6 +50,9 @@ r2 = raster(twi_tiff, TWI)
 
 year = int(sys.argv[3])
 
+total_sun = "glob"
+sun_hours = "insol"
+
 locn = geotiff(dem_10m_tiff)
 coords = locn.getCoordinates()
 degrees = locn.toDegrees(coords)
@@ -66,18 +69,24 @@ tminRaster = tminRaster.patchRaster
 tmaxRaster = tmaxRaster.patchRaster
 prcpRaster = prcpRaster.patchRaster
 
-c_w = "c_w"
-command = "r.mapcalc \"4185.5\""
-os.system(command)
+print tminRaster
+print tmaxRaster
+print prcpRaster
 
-h_bio = "h_bio"
-command = "r.mapcalc \"22*10^6\""
-os.system(command)
+#c_w = "c_w"
+#command = "r.mapcalc \"4185.5\""
+#os.system(command)
+c_w = 4185.5
+
+#h_bio = "h_bio"
+#command = "r.mapcalc \"22*10^6\""
+#os.system(command)
+h_bio = 22**10^6
 
 a_i = "a_i"
 command = "r.mapcalc \"%s=%s/((max(%s)+min(%s))/2)\"" % (a_i,TWI,TWI,TWI)
 os.system(command)
-'''
+
 for i in range(1,366):
     
     
@@ -115,6 +124,19 @@ for i in range(1,366):
     #************************************************************#
     # Locally corrected temperature that account for s_i         #
     #************************************************************#
+
+    
+    total_sun = "glob_" + str(i)
+    sun_hours = "insol_" + str(i)
+    
+    zeros = "zeros." + str(i)
+    command = "r.mapcalc \"%s=if(%s>0,0,null())\"" % (zeros, dem_10m)
+    os.system(command)
+
+    flat_total_sun = "glob_rad_flat." + str(i)
+    command = "r.sun elevin=%s aspin=%s slipein=%s day=\"" + str(i) + "\" step=\".05\" dist=\"1\" glob_rad=%s" % (dem_10m, zeros, zeros, flat_total_sun)
+    os.system(command)
+
     S_i = "S_i." + str(i)
     command = "r.mapcalc \"%s=%s/%s\"" % (S_i, total_sun, flat_total_sun)
     os.system(command)
@@ -193,14 +215,7 @@ for i in range(1,366):
     command = "r.mapcalc \"%s=%s*4185.5*%s*%s\"" % (E_ppt, F, DT, E_bio)
     os.system(command)    
 
-    EEMT-TOPO = "EEMT-TOPO." + str(i)
-    command = "r.mapcalc \"%s=%s+%s\"" % (EEMT-TOPO, E_ppt, E_bio)
-    os.system(command)
-    
-    
-    
-    
-''' 
-    
-
+    EEMT_TOPO = "EEMT-TOPO." + str(i)
+    command = "r.mapcalc \"%s=%s+%s\"" % (EEMT_TOPO, E_ppt, E_bio)
+    os.system(command)      
 
