@@ -2,7 +2,7 @@
 from raster import *
 
 print "Testing raster constructor using ../dems/brazil.output.mean.tif and myRaster"
-r = raster("../dems/brazil.output.mean.tif", "myRaster")
+r = raster("../dems/cali.output.mean.tif", "myRaster")
 
 print "Testing slopeAspect using myRaster, slope and aspect"
 r.slopeAspect("myRaster", "slope", "aspect")

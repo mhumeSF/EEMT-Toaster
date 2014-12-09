@@ -3,6 +3,6 @@
 from netcdf import *
 import sys, os
 
-n = netcdf(1980, {11369,11370}, "tmin")
+n = netcdf(2007, {11012,11013,11192,11193}, "tmax")
 
 print n.patchRaster
