@@ -17,6 +17,7 @@ class netcdf:
         for tile in tiles:
             self.rasters.append( str(param) + "_" + str(year) + "_" + str(tile) )
         
+        print self.rasters
         #set the projection and clear up g:
         command = "g.proj -c proj4=\"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\""
         os.system(command)
@@ -27,7 +28,9 @@ class netcdf:
         self.toRaster()
         if len(tiles) > 1:
             self.rasterPatch()
-
+        else:
+            self.patchRaster = self.rasters[0]
+        
 
     def getNetcdf(self):
         """

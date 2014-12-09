@@ -62,6 +62,10 @@ tminRaster = netcdf(year, tiles, "tmin")
 tmaxRaster = netcdf(year, tiles, "tmax")
 prcpRaster = netcdf(year, tiles, "prcp")
 
+tminRaster = tminRaster.patchRaster
+tmaxRaster = tmaxRaster.patchRaster
+prcpRaster = prcpRaster.patchRaster
+
 c_w = "c_w"
 command = "r.mapcalc \"4185.5\""
 os.system(command)
