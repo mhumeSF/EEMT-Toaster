@@ -11,6 +11,24 @@ from netcdf import *
 # needs total_sun and sun_hours ... inputs from outside!!!!! #
 #************************************************************#
 
+'''
+so far I have this setup to calculate EEMT-TOPO only.  Some of the calculatons for Trad
+are in there, however, I don't think the information Tyson put up on the website is
+complete.  I need more information, but this will have to suffice until then.
+
+I need a way to get total_sun and sun_hours from outside into this script.
+total_sun = glob_rad
+sun_hours = insol_time
+
+Also, another nice thing to see in this would be a way to parallelize everything within
+the for loop.  I know it can be done, I just don't yet know how Sri got work_queue working.
+perhaps this is something we can work out the next time we meet up.
+
+The three inputs to this script are the OpenTopo Dem, a total wetness index dem also from Open
+Topo and the year.  We could include options for montly averages in a later version, but I
+would like to see this working before I go there.
+'''
+
 #na_dem
 command = "r.in.gdal input=../../na_dem.tif output=na_dem"
 dem_1k = "na_dem"
@@ -29,12 +47,15 @@ prcpRaster = netcdf(year, tiles, "prcp")
 
 c_w = "c_w"
 command = "r.mapcalc \"4185.5\""
+os.system(command)
 
 h_bio = "h_bio"
 command = "r.mapcalc \"22*10^6\""
+os.system(command)
 
-a_i = "a_i." + str(i)
+a_i = "a_i"
 command = "r.mapcalc \"%s=%s/((max(%s)+min(%s))/2)\"" % (a_i,TWI,TWI,TWI)
+os.system(command)
 
 for i in range(1,366):
     
@@ -45,20 +66,22 @@ for i in range(1,366):
     tmin = tminRaster + "." + str(i)
     tmin_loc = tminRaster + "_loc." + str(i)
     command = "r.mapcalc \"%s=%s-0.00649*(%s-%s)\"" % (tmin_loc,tmin,dem_10m,dem_1km)
-    
+    os.system(command)
+
     #************************************************************#
     # tmax_loc                                                   #
     #************************************************************#
     tmax = tmaxRaster + "." + str(i)
     tmax_loc = tmaxRaster + "_loc." + str(i)
     command = "r.mapcalc \"%s=%s-0.00649*(%s-%s)\"" % (tmax_loc,tmax,dem_10m,dem_1km)
+    os.system(command)
     
     #************************************************************#
     # LOCAL_PET                                                  #
     #************************************************************#
     f_tmin_loc = "f_" + tmin_loc
     command = "r.mapcalc \"%s=6.108*exp((17.27*%s)/(%s+273.3))\"" % (f_tmin_loc, tmin_loc, tmin_loc)
-    
+
     f_tmax_loc = "f_" + tmax_loc
     command = "r.mapcalc \"%s=6.108*exp((17.27*%s)/(%s+273.3))\"" % (f_tmax_loc, tmax_loc, tmax_loc)
     
@@ -73,13 +96,16 @@ for i in range(1,366):
     #************************************************************#
     S_i = "S_i." + str(i)
     command = "r.mapcalc \"%s=%s/%s\"" % (S_i, total_sun, flat_total_sun)
+    os.system(command)
     
     tmin_topo = "tmin_topo." + str(i)
     command = "r.mapcalc \"%s=%s+(%s-(1/%s))\"" % (tmin_topo, tmin_loc,S_i,S_i)
-    
+    os.system(command)    
+
     tmax_topo = "tmax_topo." + str(i)
     command = "r.mapcalc \"%s=%s+(%s-(1/%s))\"" % (tmax_topo, tmax_loc,S_i,S_i)
-    
+    os.system(command)    
+
     #************************************************************#
     # Water Balance                                              #
     #************************************************************#  
@@ -128,22 +154,27 @@ for i in range(1,366):
     
     DT = "DT." + str(i)
     command = "r.mapcalc \"%s((%s+%s)/2) - 273.15\"" % (DT, tmax_topo, tmin_topo)
-    
+    os.system(command)    
+  
     F = "F." + str(i)
     command = "r.mapcalc \"%s=%s*%s\"" % (F, a_i, prcp)
-    
+    os.system(command)    
+
     NPP_trad = "NPP_trad." + str(i)
     command = "r.mapcalc \"%s=3000*(1+exp(1.315-0.119*(%s+%s)/2)^-1)\"" % (NPP_trad, tmax_loc, tmin_loc)
-    
+    os.system(command)    
+
     E_bio = "E_bio." + str(i)
     command = "r.mapcalc \"%s=%s*(22*10^6)\"" % (E_bio, NPP_trad)
-    
+    os.system(command)    
+
     E_ppt = "E_ppt." + str(i)
     command = "r.mapcalc \"%s=%s*4185.5*%s*%s\"" % (E_ppt, F, DT, E_bio)
-    
+    os.system(command)    
+
     EEMT-TOPO = "EEMT-TOPO." + str(i)
     command = "r.mapcalc \"%s=%s+%s\"" % (EEMT-TOPO, E_ppt, E_bio)
-    
+    os.system(command)
     
     
     

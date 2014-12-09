@@ -91,7 +91,12 @@ class netcdf:
 	for each day (band) within the netcdf input. Each band is separated by a period ie. "tmin_1980_11369.365".
 	"""
         for raster in self.rasters:
-            command = "r.external -o input=" + raster + ".nc" + " output=" + raster +" --overwrite"
+            command = "gdal_translate -of GTiFF NETCDF:" + raster + ".nc " + raster
+            try:
+                os.system(command)
+            except:
+                print "toRaster command did not complete"
+            command = "r.external -o input=" + raster + " output=" + raster +" --overwrite"
             # print command
             try:
                 os.system(command)
