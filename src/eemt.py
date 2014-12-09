@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 
-import system, os
+import os
 from raster import *
 from geotiff import *
 from netcdf import *
@@ -29,6 +29,11 @@ Topo and the year.  We could include options for montly averages in a later vers
 would like to see this working before I go there.
 '''
 
+if len(sys.argv) < 3:
+    print "not enough arguments\n"
+    print "usage [dem_10m] [dem_TWI] [year]"
+    exit(1)
+
 #na_dem
 command = "r.in.gdal input=../../na_dem.tif output=na_dem"
 dem_1k = "na_dem"
@@ -36,10 +41,22 @@ dem_1k = "na_dem"
 #setup 10m raster warp it etc etc
 dem_10m = "dem_10m"
 TWI = "TWI"
-r = raster(sys.argv[1], dem_10m)
-r2 = raster(system.argv[2], TWI)
+
+dem_10m_tiff = sys.argv[1]
+twi_tiff = sys.argv[2]
+
+r = raster(dem_10m_tiff, dem_10m)
+r2 = raster(twi_tiff, TWI)
 
 year = int(sys.argv[3])
+
+locn = geotiff(dem_10m_tiff)
+coords = locn.getCoordinates()
+degrees = locn.toDegrees(coords)
+tiles = locn.getTiles(degrees)
+
+#debug
+print tiles
 
 tminRaster = netcdf(year, tiles, "tmin")
 tmaxRaster = netcdf(year, tiles, "tmax")
@@ -56,7 +73,7 @@ os.system(command)
 a_i = "a_i"
 command = "r.mapcalc \"%s=%s/((max(%s)+min(%s))/2)\"" % (a_i,TWI,TWI,TWI)
 os.system(command)
-
+'''
 for i in range(1,366):
     
     
@@ -135,7 +152,7 @@ for i in range(1,366):
     ra = "ra." + str(i)
     command = "r.mapcalc \"%s=(4.72*(ln(2/0.00137))^2)/(1+0.536*5)\"" % (ra)
     
-    m_vp = "m_vp." str(i)
+    m_vp = "m_vp." + str(i)
     command = "r.mapcalc \"%s=0.04145*exp(0.06088*(%s+%s/2))\"" % (m_vp, tmax_topo, tmin_topo)
     
     g_psy = "g_psy." + str(i)
@@ -179,7 +196,7 @@ for i in range(1,366):
     
     
     
-    
+''' 
     
 
 
