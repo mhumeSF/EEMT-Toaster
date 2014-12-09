@@ -25,7 +25,8 @@ class netcdf:
         
         self.getNetcdf()
         self.toRaster()
-        self.rasterPatch()
+        if len(tiles) > 1:
+            self.rasterPatch()
 
 
     def getNetcdf(self):
