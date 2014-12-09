@@ -35,11 +35,12 @@ if len(sys.argv) < 3:
     exit(1)
 
 #na_dem
-command = "r.in.gdal input=../../na_dem.tif output=na_dem"
-dem_1k = "na_dem"
+command = "r.in.gdal input=/xdisk/mhume/na_dem.tif output=na_dem"
+os.system(command)
+dem_1km = "na_dem"
 
 #setup 10m raster warp it etc etc
-dem_10m = "dem_10m"
+dem_10m = "myRaster"
 TWI = "TWI"
 
 dem_10m_tiff = sys.argv[1]
@@ -61,17 +62,19 @@ tiles = locn.getTiles(degrees)
 #debug
 print tiles
 
-tminRaster = netcdf(year, tiles, "tmin")
-tmaxRaster = netcdf(year, tiles, "tmax")
-prcpRaster = netcdf(year, tiles, "prcp")
+n1Raster = netcdf(year, tiles, "tmin")
+n2Raster = netcdf(year, tiles, "tmax")
+n3Raster = netcdf(year, tiles, "prcp")
 
-tminRaster = tminRaster.patchRaster
-tmaxRaster = tmaxRaster.patchRaster
-prcpRaster = prcpRaster.patchRaster
+tminRaster = n1Raster.patchRaster
+tmaxRaster = n2Raster.patchRaster
+prcpRaster = n3Raster.patchRaster
 
-print tminRaster
-print tmaxRaster
-print prcpRaster
+# tminRaster ="tmin_1980_11371"
+# tmaxRaster ="tmax_1980_11371"
+# prcpRaster ="prcp_1980_11371"
+
+#raw_input()
 
 #c_w = "c_w"
 #command = "r.mapcalc \"4185.5\""
@@ -88,10 +91,10 @@ command = "r.mapcalc \"%s=%s/((max(%s)+min(%s))/2)\"" % (a_i,TWI,TWI,TWI)
 os.system(command)
 
 for i in range(1,366):
-    
-    
-    #************************************************************#
-    # tmin_loc                                                   #
+# i=1
+    hours_sun= "insol_" + str(i)
+
+    #************************************************************# # tmin_loc                                                   #
     #************************************************************#
     tmin = tminRaster + "." + str(i)
     tmin_loc = tminRaster + "_loc." + str(i)
@@ -105,7 +108,7 @@ for i in range(1,366):
     tmax_loc = tmaxRaster + "_loc." + str(i)
     command = "r.mapcalc \"%s=%s-0.00649*(%s-%s)\"" % (tmax_loc,tmax,dem_10m,dem_1km)
     os.system(command)
-    
+
     #************************************************************#
     # LOCAL_PET                                                  #
     #************************************************************#
@@ -114,108 +117,106 @@ for i in range(1,366):
 
     f_tmax_loc = "f_" + tmax_loc
     command = "r.mapcalc \"%s=6.108*exp((17.27*%s)/(%s+273.3))\"" % (f_tmax_loc, tmax_loc, tmax_loc)
-    
+
     vp_s = "vp_s." + str(i)
     command = "r.mapcalc \"%s=(%s+%s)/2\"" % (vp_s, f_tmax_loc, f_tmin_loc)
-    
+
     LOCAL_PET = "LOCAL_PET." + str(i)
     command = "r.mapcalc \"%s=(2.1*((%s/12)^2)*%s/((%s+%s)/2)\"" % (LOCAL_PET, hours_sun, vp_s, tmax_loc, tmin_loc)
-    
+
     #************************************************************#
     # Locally corrected temperature that account for s_i         #
     #************************************************************#
 
-    
-    total_sun = "glob_" + str(i)
-    sun_hours = "insol_" + str(i)
-    
     zeros = "zeros." + str(i)
     command = "r.mapcalc \"%s=if(%s>0,0,null())\"" % (zeros, dem_10m)
     os.system(command)
 
+    total_sun = "glob_" + str(i)
+    sun_hours = "insol_" + str(i)
     flat_total_sun = "glob_rad_flat." + str(i)
-    command = "r.sun elevin=%s aspin=%s slipein=%s day=\"" + str(i) + "\" step=\".05\" dist=\"1\" glob_rad=%s" % (dem_10m, zeros, zeros, flat_total_sun)
+    command = "r.sun elevin=%s aspin=%s slopein=%s day=%d step=\".05\" dist=\"1\" glob_rad=%s --overwrite" % (dem_10m, zeros, zeros, i, flat_total_sun)
     os.system(command)
 
     S_i = "S_i." + str(i)
     command = "r.mapcalc \"%s=%s/%s\"" % (S_i, total_sun, flat_total_sun)
     os.system(command)
-    
+
     tmin_topo = "tmin_topo." + str(i)
     command = "r.mapcalc \"%s=%s+(%s-(1/%s))\"" % (tmin_topo, tmin_loc,S_i,S_i)
-    os.system(command)    
+    os.system(command)
 
     tmax_topo = "tmax_topo." + str(i)
     command = "r.mapcalc \"%s=%s+(%s-(1/%s))\"" % (tmax_topo, tmax_loc,S_i,S_i)
-    os.system(command)    
+    os.system(command)
 
     #************************************************************#
     # Water Balance                                              #
-    #************************************************************#  
-   
-    
+    #************************************************************#
+
+
     #************************************************************#
     # PET                                                        #
     #************************************************************#
     total_sun_joules = "total_sun_joules." + str(i)
     command = "r.mapcalc \"%s=%s*3600\"" % (total_sun_joules, total_sun)
-    
+
     p_a = "p_a." + str(i)
-    command = "r.mapcalc \"101325*exp(-9.80665*0.289644*%s/(8.31447*288.15))/287.35*((%s+%s/2)+273.125) % (dem_10m, tmax_topo, tmin_topo)\""
-    
+    command = "r.mapcalc \"101325*exp(-9.80665*0.289644*%s/(8.31447*288.15))/287.35*((%s+%s/2)+273.125)\"" % (dem_10m, tmax_topo, tmin_topo)
+
     f_tmin_topo = "f_tmin_topo." + str(i)
     command = "r.mapcalc \"%s=6.108*exp((17.27*%s)/(%s+237.3))\"" % (f_tmin_topo, tmin_topo, tmin_topo)
-    
+
     f_tmax_topo = "f_tmax_topo." + str(i)
     command = "r.mapcalc \"%s=6.108*exp((17.27*%s)/(%s+237.3))\"" % (f_tmax_topo, tmax_topo, tmax_topo)
-    
+
     vp_s_topo = "vp_s_topo." + str(i)
     command = "r.mapcalc \"%s=(%s+%s)/2\"" % (vp_s_topo, f_tmax_topo, f_tmin_topo)
-    
+
     vp_loc = "vp_loc." + str(i)
     command = "r.mapcalc \"%s=6.11*10^(7.5*%s)/(237.3+%s)\"" % (vp_loc,tmin_topo, tmin_topo)
-    
+
     ra = "ra." + str(i)
     command = "r.mapcalc \"%s=(4.72*(ln(2/0.00137))^2)/(1+0.536*5)\"" % (ra)
-    
+
     m_vp = "m_vp." + str(i)
     command = "r.mapcalc \"%s=0.04145*exp(0.06088*(%s+%s/2))\"" % (m_vp, tmax_topo, tmin_topo)
-    
+
     g_psy = "g_psy." + str(i)
     command = "r.mapcalc \"%s=0.001013*(101.3*((293-0.00649*%s)/293)^5.26)/(0.622*2.45)\"" % (g_psy, dem_10m)
-    
+
     PET = "PET." + str(i)
-    command = "r.mapcalc \"%s=%s+%s*0.001013*(%s-%s)/%s))/(2.45*(%s+%s))\"" % (total_sun_joules,p_a,vp_s_topo,vp_loc,ra,m_vp,g_psy)
-    
+    command = "r.mapcalc \"%s=%s+%s*0.001013*(%s-%s)/%s))/(2.45*(%s+%s))\"" % (PET,total_sun_joules,p_a,vp_s_topo,vp_loc,ra,m_vp,g_psy)
+
     prcp = prcpRaster + "." + str(i)
     AET = "AET." + str(i)
-    command = "r.mapcalc \"%s=%s*(1+%s/%s-(1+(%s/%s)^2.63)^(1/2.63))\"" (AET,prcp, PET, prcp, PET, prcp)
-    
+    command = "r.mapcalc \"%s=%s*(1+%s/%s-(1+(%s/%s)^2.63)^(1/2.63))\"" % (AET,prcp, PET, prcp, PET, prcp)
+
     #************************************************************#
     # EEMT-TOPO                                                  #
     #************************************************************#
-    
+
     DT = "DT." + str(i)
-    command = "r.mapcalc \"%s((%s+%s)/2) - 273.15\"" % (DT, tmax_topo, tmin_topo)
-    os.system(command)    
-  
+    command = "r.mapcalc \"%s=((%s+%s)/2)-273.15\"" % (DT, tmax_topo, tmin_topo)
+    os.system(command)
+
     F = "F." + str(i)
     command = "r.mapcalc \"%s=%s*%s\"" % (F, a_i, prcp)
-    os.system(command)    
+    os.system(command)
 
     NPP_trad = "NPP_trad." + str(i)
     command = "r.mapcalc \"%s=3000*(1+exp(1.315-0.119*(%s+%s)/2)^-1)\"" % (NPP_trad, tmax_loc, tmin_loc)
-    os.system(command)    
+    os.system(command)
 
     E_bio = "E_bio." + str(i)
     command = "r.mapcalc \"%s=%s*(22*10^6)\"" % (E_bio, NPP_trad)
-    os.system(command)    
+    os.system(command)
 
     E_ppt = "E_ppt." + str(i)
     command = "r.mapcalc \"%s=%s*4185.5*%s*%s\"" % (E_ppt, F, DT, E_bio)
-    os.system(command)    
+    os.system(command)
 
-    EEMT_TOPO = "EEMT-TOPO." + str(i)
+    EEMT_TOPO = "EEMT_TOPO." + str(i)
     command = "r.mapcalc \"%s=%s+%s\"" % (EEMT_TOPO, E_ppt, E_bio)
-    os.system(command)      
+    os.system(command)
 
