@@ -4,7 +4,7 @@ import urllib2, os, sys
 
 # Get URL and Filename
 url = sys.argv[1]
-filename = url.split('/')[-1]
+filename = os.path.basename(url)
 
 # Get 'content-length' header from URL
 req_info = urllib2.urlopen(url)
