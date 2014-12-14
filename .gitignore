@@ -113,3 +113,4 @@ target/
 dems/na_dem*
 grassdata
 *.nc
+src/netcdfs
