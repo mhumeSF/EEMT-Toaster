@@ -11,12 +11,16 @@ class netcdf:
         """
         self.wq = workQueueObject
         self.tag_name = "netcdf_download"
+        self.average_tag = "netcdf_average"
         self.taskids = []
         if not os.path.exists ("netcdfs"):
             os.mkdir ("netcdfs")
 
     def get_tag_name (self):
         return self.tag_name
+
+    def get_average_tag (self):
+        return self.average_tag
 
     def get_taskids (self):
         return self.taskids

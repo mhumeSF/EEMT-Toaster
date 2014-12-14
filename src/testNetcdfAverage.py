@@ -8,7 +8,7 @@ import sys, os
 #n = netcdf(1980, [11369, 11370], "tmin")
 
 tiles = [11751]
-years = range(1980,1995)
+years = range(1980,1983)
 param = "prcp"
 
 print "now testing a single raster area"
