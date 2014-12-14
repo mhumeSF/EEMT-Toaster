@@ -1,10 +1,11 @@
 #!/usr/bin/python2
 
 import sys, os, subprocess
-from netcdf import *
+from netcdfAverage import *
 from geotiff import *
 from raster import *
 from datetime import date
+from workQ import *
 
 def is_tiff_file (filename):
     """
@@ -55,6 +56,8 @@ def main ():
         params_to_use = possible_params
 
     netcdfs = []
+    wq = workQ()
+    nc = netcdf(wq)
 
     for tiff in tiff_files:
         print ("Processing: " + tiff)
@@ -65,9 +68,11 @@ def main ():
         print tile_list
 
         for param in params_to_use:
-            for year in years:
-                cdffile = netcdf(year, tile_list, param)
-                netcdfs.append(cdffile)
+            netcdfs.append(nc.process(years, tile_list, param))
+        
+        wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
+
+        # nc.averageRasters()
 
 if __name__ == "__main__":
     main()

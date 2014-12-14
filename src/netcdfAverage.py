@@ -1,15 +1,29 @@
 #!usr/bin/python2
 
 import os, sys
+from workQ import *
 
 class netcdf:
 
-    def __init__(self, years, tiles, param):
-	"""
-	This constructor initializes a new instance of a netcdf object. The constructor
-	takes three arguments, a year, a list of tiles, and a parameter. It then calls all
-	of the instance methods on the current object. It is a main method of sorts.
-	"""
+    def __init__(self, workQueueObject):
+        """
+        Constructor: takes a workqueue object as arg to be used for the rest of the class
+        """
+        self.wq = workQueueObject
+        self.tag_name = "netcdf_download"
+        self.taskids = []
+
+    def get_tag_name (self):
+        return self.tag_name
+
+    def get_taskids (self):
+        return self.taskids
+
+    def process (self, years, tiles, param):
+        """
+        This method takes three arguments, list of years, a list of tiles, and a parameter. 
+        It then calls all of the instance methods on the current object. It is a main method of sorts.
+        """
         self.years = years
         self.tiles = tiles
         self.param = param
@@ -33,35 +47,39 @@ class netcdf:
         os.system("g.mremove \"*\"")
         
         self.getNetcdf()
-        self.toRaster()
-        if len(tiles) > 1:
-            self.rasterPatch()
-        else:
-            self.patchRaster = self.rasters[0]
-        
-        self.averageRasters()
 
     def getNetcdf(self):
         """
         This method uses wget to acquire netCdf files from the thredds file server. It gets a netCdf for each tile 
-	and downloads them all into the local path. If a file with the same name is found in the current directory,
-	downloading of the file is skipped assuming that the file has already been downloaded.
+        and downloads them all into the local path. If a file with the same name is found in the current directory,
+        downloading of the file is skipped assuming that the file has already been downloaded.
         """
+        print ("saving in directory: " + os.getcwd())
         for tile in self.tiles: 
             for year in self.years:
-                filename = self.param + "_" + str(year) + "_" + str(tile) + ".nc" 
+                filename = "netcdfs/" + self.param + "_" + str(year) + "_" + str(tile) + ".nc" 
                 command = ("wget -O %s http://thredds.daac.ornl.gov/thredds/fileServer/ornldaac/1219/tiles/%d/%d_%d/%s.nc") % \
                         (filename, year, tile, year, self.param)
 
-                try: 
-                    if os.path.isfile (filename):
-                        print filename + ": File Exists. Skipping Download..."
-                    else:
-                        os.system(command) 
-                except: 
-                    print "netcdf command did not complete"
+                # try: 
+                if os.path.isfile (filename):
+                    print filename + ": File Exists. Skipping Download..."
+                else:
+                    # os.system(command) 
+                    # arg1 -> tag_name
+                    # arg2 -> list of strings : [command, num_inputs, <input file names>, num_outputs, <output file names>
+                    taskid = self.wq.wq_job(self.tag_name, [command, "0", "1", filename])
+                    self.taskids.append(taskid)
+                # except: 
+                #     print "netcdf command did not complete"
 
     def averageRasters(self):
+        self.toRaster()
+        if len(self.tiles) > 1:
+            self.rasterPatch()
+        else:
+            self.patchRaster = self.rasters[0]
+
         for day in self.days:
             command = "r.mapcalc \"" + self.param + "." + str(day) + "=("
             first = True
@@ -114,10 +132,10 @@ class netcdf:
                 self.patchRaster = myRasterOutput
 
     def toRaster(self):
-	"""
-	This method uses the r.external command to convert .nc files to raster files. It creates a new raster
-	for each day (band) within the netcdf input. Each band is separated by a period ie. "tmin_1980_11369.365".
-	"""
+        """
+        This method uses the r.external command to convert .nc files to raster files. It creates a new raster
+        for each day (band) within the netcdf input. Each band is separated by a period ie. "tmin_1980_11369.365".
+        """
         i = 0
         for map in self.maps:
             command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map
