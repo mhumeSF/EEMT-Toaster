@@ -12,6 +12,8 @@ class netcdf:
         self.wq = workQueueObject
         self.tag_name = "netcdf_download"
         self.taskids = []
+        if not os.path.exists ("netcdfs"):
+            os.mkdir ("netcdfs")
 
     def get_tag_name (self):
         return self.tag_name
@@ -32,7 +34,7 @@ class netcdf:
         self.maps = []
         for tile in tiles:
             for year in years:
-                self.maps.append( str(param) + "_" + str(year) + "_" + str(tile) )
+                self.maps.append( "netcdfs/" + str(param) + "_" + str(year) + "_" + str(tile) )
                 
                 if len(self.tiles) > 1:
                     self.rasters.append( str(param) + "_" + str(year) + "_" + str(tile) )

@@ -72,7 +72,7 @@ def main ():
         
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
-        # nc.averageRasters()
+        nc.averageRasters()
 
 if __name__ == "__main__":
     main()

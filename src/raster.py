@@ -1,6 +1,7 @@
 import sys, os, tempfile
 # The related files are at $GISBASE/etc/python/grass/script/*.py
 from subprocess import call
+from workQ import *
 
 
 class raster:
@@ -74,6 +75,7 @@ class raster:
 
 
     def sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
+
         """
         This method calls the r.sun function from the grass module. There are a
         ton of arguments for it to run properly.
