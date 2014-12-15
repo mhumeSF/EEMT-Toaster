@@ -3,7 +3,7 @@
 import os
 from raster import *
 from geotiff import *
-from netcdf import *
+#from netcdf import *
 
 #eemt.py [dem_10m] [dem_TWI] [year]
 
@@ -30,7 +30,7 @@ if len(sys.argv) < 3:
 #na_dem
 na_dem = sys.argv[3]
 dem_1km = "na_dem"
-command = "r.external input=" + na_dem + " output=" + dem_1km
+command = "r.external input=" + na_dem + " output=" + dem_1km + " --overwrite"
 os.system(command)
 
 #setup 10m raster warp it etc etc
@@ -43,7 +43,6 @@ twi_tiff = sys.argv[2]
 r = raster(dem_10m_tiff, dem_10m)
 r2 = raster(twi_tiff, TWI)
 
-year = int(sys.argv[3])
 
 S_i = sys.argv[7]
 sun_hour = sys.argv[8]
@@ -117,7 +116,7 @@ command = "r.mapcalc \"%s=(%s+%s)/2\"" % (vp_s, f_tmax_loc, f_tmin_loc)
 os.system(command)
 
 LOCAL_PET = "LOCAL_PET." + str(i)
-command = "r.mapcalc \"%s=(2.1*((%s/12)^2)*%s/((%s+%s)/2)\"" % (LOCAL_PET, hours_sun, vp_s, tmax_loc, tmin_loc)
+command = "r.mapcalc \"%s=(2.1*((%s/12)^2)*%s/((%s+%s)/2)\"" % (LOCAL_PET, sun_hours, vp_s, tmax_loc, tmin_loc)
 os.system(command)
 
 #************************************************************#

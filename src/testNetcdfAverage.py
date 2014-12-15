@@ -1,6 +1,6 @@
 #!/usr/bin/python2
 
-from netcdfAverage import *
+from netcdfAverage_local import *
 import sys, os
 
 
@@ -9,11 +9,13 @@ import sys, os
 
 tiles = [11751]
 years = range(1980,1983)
-param = "prcp"
+param = "tmax"
 
 print "now testing a single raster area"
 
-n = netcdf(years, tiles, param)
+n = netcdf()
 
+n.process(years, tiles, param)
+n.averageRasters()
 
 print n.patchRaster
