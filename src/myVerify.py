@@ -8,17 +8,17 @@ def verifyFileSize(url):
     is the same size as the file to be downloaded. False otherwise. Not exactly
     the best validation form for netcdf files but its the best we could do. :/
     """
+    """    
+    # Get 'content-length' header from URL
+    req_info = urllib2.urlopen(url)
+    contentLength = req_info.headers['content-length']
     
     # Get file name from url
     filename = os.path.basename(url)
-    
-    # Get 'content-length' header from URL
-    req_info = urllib2.urlopen(url)
-    req_info.headers.keys()
-    contentLength = req_info.headers['content-length']
-    
-    # Get size of file
+    # Get size of local file
     fileSize = os.path.getsize(filename)
 
     # Returns true if existing file and url file are same size
-    return contentLength == fileSize
+    return int(contentLength) == int(fileSize)
+    """
+    return int(os.path.getsize(os.path.basename(url))) == int(urllib2.urlopen(url).headers['content-length'])
