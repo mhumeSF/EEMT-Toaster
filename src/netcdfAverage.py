@@ -81,6 +81,7 @@ class netcdf:
                 #     print "netcdf command did not complete"
 
     def averageRasters(self):
+        self.tag_name = "netcdf_average"
         self.toRaster()
         if len(self.tiles) > 1:
             self.rasterPatch()
@@ -93,13 +94,17 @@ class netcdf:
             for folder in grassData.rmapOutputFolders: 
                 outputRaster = grassData.grassdataFolder + "/" + folder + "/" + self.param + "." + str(day)
                 outputRasters.append(outputRaster)
+            inputRaster = self.param + "." + str(day)
             command = "r.mapcalc \"" + inputRaster + "=("
             first = True
             for year in self.years:
                 raster = self.param + "_" + str(year)
+                once = True
                 for folder in grassData.rmapOutputFolders:
-                    inputRaster = grassData.grassdataFolder + "/" + folder + "/" + raster
-                    inputRasters.append(raster)
+                    if once:
+                        inputRaster = grassData.grassdataFolder + "/" + folder + "/" + raster
+                        inputRasters.append(raster)
+                        once = not(once)
                 if first:
                     command += raster + "." + str(day)
                     first = not(first)
@@ -107,8 +112,18 @@ class netcdf:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
             print command
+            
+            wq_command = []
+            wq_command.append(command)
+            wq_command.append(str(len(inputRasters)))
 
-            taskid = self.wq.wq_wqjob(self.average_tag, [command, str(len(inputRasters)), inputRasters, str(len(outputRasters)), outputRasters])
+            for item in inputRasters:
+                wq_command.append(item)
+            wq_command.append(str(len(outputRasters)))
+            for item in outputRasters:
+                wq_command.append(item)
+
+            taskid = self.wq.wq_job(self.tag_name, wq_command) 
             self.taskids.append(taskid)
             # os.system(command)
             
