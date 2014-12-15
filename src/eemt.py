@@ -54,10 +54,9 @@ from geotiff import *
 #
 #*************************************************************#
 
-
-if len(sys.argv) < 3:
+if len(sys.argv) < 10:
     print "not enough arguments\n"
-    print "usage [dem_10m] [dem_TWI] [na_dem] [tminRaster] [tmaxRaster] [prcpRaster] [S_i] [total_sun] [sun_hours] [day]"
+    print "usage [dem_10m] [dem_TWI] [na_dem TIF file] [tminRaster] [tmaxRaster] [prcpRaster] [S_i] [total_sun] [sun_hours] [day]"
     exit(1)
 
 #na_dem
@@ -67,14 +66,14 @@ command = "r.external input=" + na_dem + " output=" + dem_1km + " --overwrite"
 os.system(command)
 
 #setup 10m raster warp it etc etc
-dem_10m = "dem_10m"
-TWI = "TWI"
+dem_10m = sys.argv[1]
+TWI = sys.argv[2]
 
-dem_10m_tiff = sys.argv[1]
+dem_10m = sys.argv[1]
 twi_tiff = sys.argv[2]
 
-r = raster(dem_10m_tiff, dem_10m)
-r2 = raster(twi_tiff, TWI)
+# r = raster(dem_10m_tiff, dem_10m)
+# r2 = raster(twi_tiff, TWI)
 
 S_i = sys.argv[7]
 total_sun = sys.argv[8]
