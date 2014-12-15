@@ -2,6 +2,7 @@
 
 import os, sys
 from workQ import *
+from grassData import *
 
 class netcdf:
 
@@ -33,7 +34,7 @@ class netcdf:
         self.years = years
         self.tiles = tiles
         self.param = param
-        self.days = range(1,5)
+        self.days = range(1,366)
         self.rasters = []
         self.maps = []
         for tile in tiles:
@@ -50,7 +51,7 @@ class netcdf:
         command = "g.proj -c proj4=\"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\""
         os.system(command)
         #clear up
-        os.system("g.mremove \"*\"")
+        # os.system("g.mremove \"*\"")
         
         self.getNetcdf()
 
@@ -86,11 +87,19 @@ class netcdf:
         else:
             self.patchRaster = self.rasters[0]
 
+        outputRasters = []
+        inputRasters = []
         for day in self.days:
-            command = "r.mapcalc \"" + self.param + "." + str(day) + "=("
+            for folder in grassData.rmapOutputFolders: 
+                outputRaster = grassData.grassdataFolder + "/" + folder + "/" + self.param + "." + str(day)
+                outputRasters.append(outputRaster)
+            command = "r.mapcalc \"" + inputRaster + "=("
             first = True
             for year in self.years:
                 raster = self.param + "_" + str(year)
+                for folder in grassData.rmapOutputFolders:
+                    inputRaster = grassData.grassdataFolder + "/" + folder + "/" + raster
+                    inputRasters.append(raster)
                 if first:
                     command += raster + "." + str(day)
                     first = not(first)
@@ -98,7 +107,10 @@ class netcdf:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
             print command
-            os.system(command)
+
+            taskid = self.wq.wq_wqjob(self.average_tag, [command, str(len(inputRasters)), inputRasters, str(len(outputRasters)), outputRasters])
+            self.taskids.append(taskid)
+            # os.system(command)
             
     def rasterPatch(self):
         """
@@ -119,7 +131,7 @@ class netcdf:
             print "rasterPatch command did not complete"
         
         # iterate through all days of the year
-        for i in days:
+        for i in self.days:
             for year in self.years:
                 rasterWithDay = []
                 for raster in self.rasters:
