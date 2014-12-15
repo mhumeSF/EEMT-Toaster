@@ -1,0 +1,6 @@
+nvidia-smi was not found. Please add the location of nvidia-smi to PATH.
+couldn't connect to 128.196.131.51:1024: Connection refused
+couldn't connect to 128.196.131.51:1024: Connection refused
+couldn't connect to 128.196.131.51:1024: Connection refused
+couldn't connect to 128.196.131.51:1024: Connection refused
+2014/12/15 13:20:31.56 work_queue_worker[16138] notice: stopping: abort signal received

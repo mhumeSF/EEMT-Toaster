@@ -2,7 +2,7 @@ from workQ import *
 from grassData import *
 
 grassFolder="../../nc_spf/PERMANENT"
-command="r.mapcalc z=5"
+command="r.mapcalc \"z=5\""
 
 outputRasters = []
 for folder in grassData.rmapOutputFolders:
