@@ -1,7 +1,7 @@
 import sys, os, tempfile
 # The related files are at $GISBASE/etc/python/grass/script/*.py
 from subprocess import call
-from workQ import *
+#from workQ import *
 
 
 class raster:
@@ -21,7 +21,11 @@ class raster:
             try:
                 #r.external(input=self.tiff, output=self.output)
                 os.system("gdalwarp -overwrite -t_srs \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear -multi -dstnodata 0 -of GTiff %s %s" % (tiff, warped))
-                call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
+                command = "r.external input=%s output=%s -o --overwrite" % (warped, self.output)
+                print command
+                os.system(command)
+                
+                #call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
 
             except:
                 print("r.external failed to generate raster file "
