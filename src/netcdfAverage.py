@@ -87,7 +87,8 @@ class netcdf:
             self.rasterPatch()
         else:
             self.patchRaster = self.rasters[0]
-
+        
+        
         outputRasters = []
         inputRasters = []
         for day in self.days:
@@ -97,9 +98,10 @@ class netcdf:
             inputRaster = self.param + "." + str(day)
             command = "r.mapcalc \"" + inputRaster + "=("
             first = True
+            once = True
             for year in self.years:
                 raster = self.param + "_" + str(year)
-                once = True
+                
                 for folder in grassData.rmapOutputFolders:
                     if once:
                         inputRaster = grassData.grassdataFolder + "/" + folder + "/" + raster
