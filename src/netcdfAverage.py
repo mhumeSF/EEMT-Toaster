@@ -81,14 +81,17 @@ class netcdf:
                 #     print "netcdf command did not complete"
 
     def averageRasters(self):
-        self.tag_name = "netcdf_average"
+        
+        self.taskids = []
         self.toRaster()
         if len(self.tiles) > 1:
             self.rasterPatch()
         else:
             self.patchRaster = self.rasters[0]
         
-        
+        self.tag_name = "netcdf_average"
+        os.system("g.region rast=" + self.param + "." + str(self.days[0])) 
+
         outputRasters = []
         inputRasters = []
         for day in self.days:
@@ -113,8 +116,7 @@ class netcdf:
                 else:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
-            print command
-            
+                        
             wq_command = []
             wq_command.append(command)
             wq_command.append(str(len(inputRasters)))
@@ -125,7 +127,8 @@ class netcdf:
             for item in outputRasters:
                 wq_command.append(item)
 
-            taskid = self.wq.wq_job(self.tag_name, wq_command) 
+            #taskid = self.wq.wq_job(self.tag_name, wq_command) 
+            taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
             # os.system(command)
             
@@ -134,6 +137,8 @@ class netcdf:
         This method uses r.patch to patch all the raster files together.
         The output will be raster files formatted "param_year.day"
         """
+        taskids = []
+        self.tag_name = "netcdf_patch"
         rastersWithDay = []
         for raster in self.rasters:
             rastersWithDay.append(raster + ".1")
@@ -161,7 +166,11 @@ class netcdf:
                 #print command
                 #patched raster outputs will be "param_year.day"
                 try:
-                    os.system(command)
+                    #os.system(command)
+                    taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
+                    taskids.append(taskid)
+
+                    self.wq.wq_wait(self.tag_name, taskids)
                 except:
                     print "rasterPatch command did not complete"
                 self.patchRaster = myRasterOutput
