@@ -1,10 +1,11 @@
 #!/usr/bin/python2
 
 import sys, os, subprocess
-from netcdf import *
+from netcdfAverage import *
 from geotiff import *
 from raster import *
 from datetime import date
+from workQ import *
 
 def is_tiff_file (filename):
     """
@@ -15,7 +16,7 @@ def is_tiff_file (filename):
 def main ():
     """
     This function takes a bunch of params, years, filenames as arguments in any insane order
-    and tries to make sense of what they are and use them somehow. 
+    and tries to make sense of what they are and use them somehow.
     """
     # if no args, suicide
     if len(sys.argv) == 1:
@@ -39,7 +40,7 @@ def main ():
         elif is_tiff_file (i):
             tiff_files.append(i)
         # if nothing else, check if it is a valid year after 1980 till year before current
-        else: 
+        else:
             try:
                 year = int(i)
                 if year in range(1980, date.today().year):
@@ -55,6 +56,9 @@ def main ():
         params_to_use = possible_params
 
     netcdfs = []
+    wq = workQ()
+    nc = netcdf(wq)
+
 
     for tiff in tiff_files:
         print ("Processing: " + tiff)
@@ -64,10 +68,41 @@ def main ():
         tile_list = locn.getTiles (degrees)
         print tile_list
 
+        demRaster = "demRaster"
+        r = raster(tiff, demRaster, wq)
+        slope = "slope"
+        aspect = "aspect"
+        r.slopeAspect(demRaster, slope, aspect)
+
+        myStep = "0.05"
+
+        sun_hours = "sun_hours"
+        total_sun = "total_sun"
+
+        for day in range(1,366):
+            insol_time = sun_hours + "." + str(day)
+            glob_rad = total_sun + "." + str(day)
+            r.sun(demRaster, slope, aspect, str(day), myStep, insol_time, glob_rad)
+
         for param in params_to_use:
-            for year in years:
-                cdffile = netcdf(year, tile_list, param)
-                netcdfs.append(cdffile)
+            netcdfs.append(nc.process(years, tile_list, param))
+
+        wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
+
+        nc.averageRasters()
+
+        wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
+
+        wq.wq_wait(r.get_tag_name(), r.get_taskids())
+
+    # calculate S_i
+    # naming schema S_i.(julian_day)
+
+
+    #dem = "../dems/cali.output.mean.tif"
+    #demRaster = "dem_raster"
+
+
 
 if __name__ == "__main__":
     main()
