@@ -23,7 +23,7 @@ cd readline-6.0
 make -j4 && make install
 cd ~/.src
 
-echo "Installing Python 2.7..."  # Because it's 2014 people
+echo "Installing Python 2.7..."  # Because it's 2014
 
 URL=https://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
 FILE=$(basename $URL)
@@ -33,6 +33,19 @@ fi
 tar -zxf $FILE
 cd Python-2.7.3
 ./configure --prefix=$HOME/.local
+make -j4 && make install
+cd ~/.src
+
+echo "Installing GeoConvert..."
+
+URL=http://sourceforge.net/projects/geographiclib/files/distrib/GeographicLib-1.39.tar.gz
+FILE=$(basename $URL)
+if [[ ! -f $FILE ]]; then
+    wget $URL
+fi
+tar -zxf $FILE
+cd ${FILE%.tar.gz}
+./configure --prefix $HOME/.local --with-python-path $HOME/.local --with-readline-path $HOME/.local/lib
 make -j4 && make install
 cd ~/.src
 
@@ -49,8 +62,6 @@ cd cctools-4.2.2-source
 make -j4 && make install
 cd ~/.src
 
-curl -L http://goo.gl/jSfSiJ | sh
-cd ~/.src
 
 echo "Installing iCommands..." # Why not?
 
@@ -69,8 +80,10 @@ echo "Installing netCDF libs..."
 URL=ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.2.tar.gz
 FILE=$(basename $URL)
 if [[ ! -f $FILE ]]; then
-    wget $FILE
+    wget $URL
 fi
+tar -zvf netcdf-4.3.2.tar.gz
+cd netcdf-4.3.2
 ./configure --prefix=$HOME/.local --disable-netcdf-4
 make -j4 && make install
 cd ~/.src
@@ -109,9 +122,9 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd grass-6.4.4
-./configure --prefix=$HOME/.local --with-proj-libs=$HOME/.local/lib --with-proj-includes=$HOME/.local/include --with-fftw=no > /dev/null
-make -j4 > /dev/null
-make -j4 > /dev/null # Error for wxpython that is resolved if I run make once more. Order of operations?
+./configure --prefix=$HOME/.local --with-proj-libs=$HOME/.local/lib --with-proj-includes=$HOME/.local/include --with-fftw=no
+make -j4
+make -j4 # Error for wxpython that is resolved if I run make once more. Order of operations?
 
 make install
 
