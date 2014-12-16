@@ -71,8 +71,9 @@ class netcdf:
 
                 command = ("wget -O %s %s") % (filename, url)
 
-                # Check if file already exists and the size matches that of content-length from url header
-                if os.path.isfile (filename) and self.netcdfExists(url):
+                # Check if file already exists and the size matches that of content-length from url head
+                if os.path.isfile (filename):
+                    if self.netcdfExists(url, filename):
                         print filename + ": File Exists. Skipping Download..."
                 else:
                     # os.system(command)
@@ -83,11 +84,11 @@ class netcdf:
                 # except:
                 #     print "netcdf command did not complete"
 
-    def netcdfExists(self, url):
+    def netcdfExists(self, url, filename):
         """
         Verifies netCDF is downloaded to it's entirety by verifying the filesize with the content-length header
         """
-        return int(os.path.getsize(os.path.basename(url))) == int(urllib2.urlopen(url).headers['content-length'])
+        return int(os.path.getsize(filename)) == int(urllib2.urlopen(url).headers['content-length'])
 
 
     def averageRasters(self):

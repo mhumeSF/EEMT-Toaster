@@ -45,8 +45,7 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd ${FILE%.tar.gz}
-./configure --prefix $HOME/.local --with-python-path $HOME/.local --with-readline-path $HOME/.local/lib
-make -j4 && make install
+make PREFIX=$HOME/.local -j4 install
 cd ~/.src
 
 echo "Installing cctools with work_queue python lib..."
@@ -82,7 +81,7 @@ FILE=$(basename $URL)
 if [[ ! -f $FILE ]]; then
     wget $URL
 fi
-tar -zvf netcdf-4.3.2.tar.gz
+tar -zxf netcdf-4.3.2.tar.gz
 cd netcdf-4.3.2
 ./configure --prefix=$HOME/.local --disable-netcdf-4
 make -j4 && make install
