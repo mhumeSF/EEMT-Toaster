@@ -128,3 +128,10 @@ make -j4 # Error for wxpython that is resolved if I run make once more. Order of
 make install
 
 cd
+
+echo 'export GISBASE="$HOME/.local/grass-6.4.4/"' >> ~/.bashrc
+echo 'export PATH="$HOME/.local/bin:$HOME/bin:$GISBASE/bin:$GISBASE/scripts:$PATH"' >> ~/.bashrc
+echo 'export LD_LIBRARY_PATH="$HOME/.local/grass-6.4.4/lib:$HOME/.local/lib"' >> ~/.bashrc
+echo 'export GRASS_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"' >> ~/.bashrc
+echo 'export GISRC=$HOME/.grassrc' >> ~/.bashrc
+echo 'export GIS_LOCK=/tmp/grass_lock' >> ~/.bashrc
