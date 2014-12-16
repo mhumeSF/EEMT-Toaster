@@ -17,14 +17,13 @@ echo $FILE
 if [[ ! -f $FILE ]]; then
     wget $URL
 fi
-tar -zxf $FILE > /dev/null
+tar -zxf $FILE
 cd readline-6.0
-./configure --prefix=$HOME/.local > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix=$HOME/.local
+make -j4 && make install
 cd ~/.src
 
-echo "Installing Python 2.7..."  # Because it's 2014
+echo "Installing Python 2.7..."  # Because it's 2014 people
 
 URL=https://www.python.org/ftp/python/2.7.3/Python-2.7.3.tgz
 FILE=$(basename $URL)
@@ -33,9 +32,8 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd Python-2.7.3
-./configure --prefix=$HOME/.local > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix=$HOME/.local
+make -j4 && make install
 cd ~/.src
 
 echo "Installing cctools with work_queue python lib..."
@@ -47,9 +45,11 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd cctools-4.2.2-source
-./configure --prefix $HOME/.local --with-python-path $HOME/.local --with-readline-path $HOME/.local/lib > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix $HOME/.local --with-python-path $HOME/.local --with-readline-path $HOME/.local/lib
+make -j4 && make install
+cd ~/.src
+
+curl -L http://goo.gl/jSfSiJ | sh
 cd ~/.src
 
 echo "Installing iCommands..." # Why not?
@@ -71,9 +71,8 @@ FILE=$(basename $URL)
 if [[ ! -f $FILE ]]; then
     wget $FILE
 fi
-./configure --prefix=$HOME/.local --disable-netcdf-4 > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix=$HOME/.local --disable-netcdf-4
+make -j4 && make install
 cd ~/.src
 
 echo "Installing GDal w/ netCDF support..."
@@ -84,9 +83,8 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd gdal-1.11.0
-./configure --prefix=$HOME/.local > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix=$HOME/.local
+make -j4 && make install
 cd ~/.src
 
 echo "Installing Proj libs..."
@@ -98,9 +96,8 @@ if [[ ! -f $FILE ]]; then
 fi
 tar -zxf $FILE
 cd proj-4.8.0
-./configure --prefix=$HOME/.local > /dev/null
-make -j4 > /dev/null
-make install > /dev/null
+./configure --prefix=$HOME/.local
+make -j4 && make install
 cd ~/.src
 
 echo "Installing Grass..."
@@ -119,10 +116,3 @@ make -j4 > /dev/null # Error for wxpython that is resolved if I run make once mo
 make install
 
 cd
-
-echo 'export GISBASE="$HOME/.local/grass-6.4.4/"' >> ~/.bashrc
-echo 'export PATH="$HOME/.local/bin:$HOME/bin:$GISBASE/bin:$GISBASE/scripts:$PATH"' >> ~/.bashrc
-echo 'export LD_LIBRARY_PATH="$HOME/.local/grass-6.4.4/lib:$HOME/.local/lib"' >> ~/.bashrc
-echo 'export GRASS_LD_LIBRARY_PATH="$LD_LIBRARY_PATH"' >> ~/.bashrc
-echo 'export GISRC=$HOME/.grassrc' >> ~/.bashrc
-echo 'export GIS_LOCK=/tmp/grass_lock' >> ~/.bashrc
