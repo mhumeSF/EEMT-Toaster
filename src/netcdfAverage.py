@@ -69,13 +69,11 @@ class netcdf:
                 url = ("http://thredds.daac.ornl.gov/thredds/fileServer/ornldaac/1219/tiles/%d/%d_%d/%s.nc") % \
                     (year, tile, year, self.param)
 
-                verified = netcdfExists(url)
-
                 command = ("wget -O %s %s") % (filename, url)
 
-                # try:
-                if os.path.isfile (filename) and verified:
-                    print filename + ": File Exists. Skipping Download..."
+                # Check if file already exists and the size matches that of content-length from url header
+                if os.path.isfile (filename) and self.netcdfExists(url):
+                        print filename + ": File Exists. Skipping Download..."
                 else:
                     # os.system(command)
                     # arg1 -> tag_name
@@ -85,7 +83,7 @@ class netcdf:
                 # except:
                 #     print "netcdf command did not complete"
 
-    def netcdfExists(url):
+    def netcdfExists(self, url):
         """
         Verifies netCDF is downloaded to it's entirety by verifying the filesize with the content-length header
         """
@@ -150,7 +148,7 @@ class netcdf:
         The output will be raster files formatted "param_year.day"
         """
         taskids = []
-        tag_name = "netcdf_patch"
+        self.tag_name = "netcdf_patch"
         rastersWithDay = []
         for raster in self.rasters:
             rastersWithDay.append(raster + ".1")
@@ -182,8 +180,7 @@ class netcdf:
                     taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
                     taskids.append(taskid)
 
-                    self.wq.wq_wait(tag_name, taskids)
-
+                    self.wq.wq_wait(self.tag_name, taskids)
                 except:
                     print "rasterPatch command did not complete"
                 self.patchRaster = myRasterOutput

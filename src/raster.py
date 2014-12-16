@@ -1,18 +1,22 @@
 import sys, os, tempfile
 # The related files are at $GISBASE/etc/python/grass/script/*.py
 from subprocess import call
-#from workQ import *
+from workQ import *
 
 
 class raster:
 
-    def __init__(self, tiff, raster):
+    def __init__(self, tiff, raster, wq):
         """
         This initializes a new instance of a raster object and sets
         the g.region for concurrent raster calculations. It takes two
         arguments, the first is an input geotiff file, the second is a
         name for an output raster file.
         """
+        self.tag_name = "raster_sun"
+        self.taskids = []
+        self.wq = wq
+
         if tiff and raster:
             self.tiff = tiff
             warped = tiff + ".warped"
@@ -24,7 +28,7 @@ class raster:
                 command = "r.external input=%s output=%s -o --overwrite" % (warped, self.output)
                 print command
                 os.system(command)
-                
+
                 #call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
 
             except:
@@ -35,7 +39,7 @@ class raster:
             try:
                 #g.region(rast=self.output)
                 os.system("g.region rast=%s" % (self.output))
-            
+
 	    except:
                 print("g.region failed to generate output raster file "
                         + "with specified name: " + self.output)
@@ -51,7 +55,7 @@ class raster:
         """
         try:
             os.system("r.out.gdal input=%s output=%s" % (raster, output))
-        
+
 	except:
             print("r.in.gdal failed to generate your geoTif")
 
@@ -79,11 +83,11 @@ class raster:
 
 
     def sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
-
         """
         This method calls the r.sun function from the grass module. There are a
         ton of arguments for it to run properly.
         """
+
         try:
             command = (
                 "r.sun " + \
@@ -99,8 +103,8 @@ class raster:
                 " glob_rad=" + myGlob_rad + \
                 " --overwrite"
                 )
-            os.system(command)
-
+            taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
+            self.taskids.append(taskid)
         except:
             print("r.sun failed to run with specified arguments, specifics "
                     + "unknown since there are so many freakin arguments!")
@@ -134,3 +138,9 @@ class raster:
         #r.mapcalc PET=(2.1*(hours_sun^2)*vp_s/((tmax_loc+tmin_loc)/2)
 
     #def rPatch(self):
+
+    def get_tag_name(self):
+        return self.tag_name
+
+    def get_task_ids(self):
+        return self.taskids
