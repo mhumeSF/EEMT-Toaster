@@ -1,0 +1,2 @@
+nvidia-smi was not found. Please add the location of nvidia-smi to PATH.
+2014/12/15 14:12:11.53 work_queue_worker[18176] notice: stopping: abort signal received

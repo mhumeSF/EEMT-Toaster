@@ -110,3 +110,7 @@ docs/_build/
 # PyBuilder
 target/
 
+dems/na_dem*
+grassdata
+*.nc
+src/netcdfs

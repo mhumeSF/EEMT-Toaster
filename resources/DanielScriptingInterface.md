@@ -30,6 +30,20 @@ The idea is to resume this script for each of the parameter calculations we need
 This will simply call r.slope.aspect and out slope and aspect rasters for r.sun
 
 
+### importraster.py
+
+##### Usage:
+
+	$ python importraster.py input=geoTiff output=raster
+
+##### Inputs:
+- **input** The input geoTiff to be used for concurrent calculations
+- **output** The name of the raster file to output (use this as the input to sun, paramcalc etc)
+
+##### Description:
+Creates a raster file and sets the g.region for Concurrent raster calculations
+
+
 
 ### sun.py
 

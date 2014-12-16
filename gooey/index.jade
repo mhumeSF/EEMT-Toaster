@@ -1,0 +1,68 @@
+doctype
+head
+  title Erm... hi
+  link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css")
+
+body(style="margin-top:50px")
+  //- Might need more waffles
+  .container
+    .row
+      .col-md-12
+        //-img(class="pull-right" src="http://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/As_seen_on_TV.svg/220px-As_seen_on_TV.svg.png" width="100")
+        //-h1 EEMT Toaster&reg;
+        //-p Tired of baking your own EEMT calculations? Our nifty EEMT Toaster&reg; does the baking for you. Results takes seconds!
+
+        h1 EEMT Calculator
+
+        hr
+
+        form(name="eemt", class="form-horizontal", role="form")
+          .form-group
+            label(class="control-label col-sm-2") Files to upload
+            .col-sm-10
+              input(type="file", class="form-control ")
+
+          .form-group.row
+            label(class="control-label col-sm-2") HPC
+            .col-sm-10
+              label(class="checkbox-inline")
+                input(type="checkbox", name="cluster", value="HPC")
+                | HPC
+              label(class="checkbox-inline")
+                input(type="checkbox", name="cluster", value="FutureGrid")
+                | FutureGrid
+
+          .form-group.row
+            label(class="control-label col-sm-2") DEM Resolution
+            .col-sm-10
+              label(class="radio-inline")
+                input(type="radio", name="demREZ", value="1000")
+                | 1k
+              label(class="radio-inline")
+                input(type="radio", name="demREZ", value="100")
+                | 100m
+              label(class="radio-inline")
+                input(type="radio", name="demREZ", value="10")
+                | 10m
+              label(class="radio-inline")
+                input(type="radio", name="demREZ", value="1")
+                | 1m
+
+          .form-group.row
+            label(class="control-label col-sm-2") REZ
+            .col-sm-10
+              label(class="radio-inline")
+                input(type="radio", name="valREZ", value="1000")
+                | 1k
+              label(class="radio-inline")
+                input(type="radio", name="valREZ", value="100")
+                | 100m
+              label(class="radio-inline")
+                input(type="radio", name="valREZ", value="10")
+                | 10m
+              label(class="radio-inline")
+                input(type="radio", name="valREZ", value="1")
+                | 1m
+
+
+

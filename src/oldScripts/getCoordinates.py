@@ -1,10 +1,13 @@
-import sys, subprocess, re
+import sys, subprocess, re, os
 
 #try to get tiff from commnad line args
 try:
     tiff = sys.argv[1]
 except:
     sys.exit("No geotiff file specified, exiting...")
+
+command = ("gdalwarp -overwrite -s_srs EPSG:26911 -t_srs '+proj\=lcc +lat_1=25 +lat_2=60 \+lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs' -r bilinear -of GTiff %s %s" % (tiff, sys.argv[1] + "warp"))
+os.system(command)
 
 #generate command for os
 command = "gdalinfo " + tiff
@@ -33,7 +36,7 @@ if match:
 	#split them on the comma
 	long_lat = longlat.split(',')
 	#if the length of the resulting list is 2
-	if len(long_lat) == 2: 
+	if len(long_lat) == 2:
 	    #save long/lat values
 	    lat = long_lat[1][:-1].lower()
 	    long = long_lat[0].lower()
@@ -47,8 +50,8 @@ if match:
 		long = '-' + long[:-1].strip()
 	    else:
 		long = long[:-1]
- 	    #print the longitude and latitude values to the screen
-	    #print('long = ' + long , 'lat = ' + lat)
+	    #print the longitude and latitude values to the screen
+	    print('long = ' + long , 'lat = ' + lat)
 	else:
 	    sys.exit("Improper long/lat format in geotiff file, exiting...")
     else:
