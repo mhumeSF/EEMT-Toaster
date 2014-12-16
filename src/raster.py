@@ -142,5 +142,5 @@ class raster:
     def get_tag_name(self):
         return self.tag_name
 
-    def get_task_ids(self):
+    def get_taskids(self):
         return self.taskids
