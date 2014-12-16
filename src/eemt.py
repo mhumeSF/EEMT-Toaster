@@ -54,9 +54,9 @@ from geotiff import *
 #
 #*************************************************************#
 
-if len(sys.argv) < 10:
+if len(sys.argv) < 9:
     print "not enough arguments\n"
-    print "usage [dem_10m] [dem_TWI] [na_dem TIF file] [tminRaster] [tmaxRaster] [prcpRaster] [S_i] [total_sun] [sun_hours] [day]"
+    print "usage [dem_10m_raster] [dem_TWI_raster] [na_dem TIF file] [tminRaster] [tmaxRaster] [prcpRaster] [total_sun] [sun_hours] [day]"
     exit(1)
 
 #na_dem
@@ -75,10 +75,9 @@ twi_tiff = sys.argv[2]
 # r = raster(dem_10m_tiff, dem_10m)
 # r2 = raster(twi_tiff, TWI)
 
-S_i = sys.argv[7]
-total_sun = sys.argv[8]
-sun_hours = sys.argv[9]
-i = sys.argv[10] # day of the year
+total_sun = sys.argv[7]
+sun_hours = sys.argv[8]
+i = sys.argv[9] # day of the year
 
 tminRaster = sys.argv[4]
 tmaxRaster = sys.argv[5]
@@ -140,19 +139,17 @@ os.system(command)
 # Locally corrected temperature that account for s_i         #
 #************************************************************#
 
-#zeros = "zeros." + str(i)
-#command = "r.mapcalc \"%s=if(%s>0,0,null())\"" % (zeros, dem_10m)
-#os.system(command)
+zeros = "zeros." + str(i)
+command = "r.mapcalc \"%s=if(%s>0,0,null())\"" % (zeros, dem_10m)
+os.system(command)
 
-#flat_total_sun = "glob_rad_flat." + str(i)
-#command = "r.sun elevin=%s aspin=%s slopein=%s day=%d step=\".05\" dist=\"1\" glob_rad=%s --overwrite" % (dem_10m, zeros, zeros, i, flat_total_sun)
-#os.system(command)
+flat_total_sun = "glob_rad_flat." + str(i)
+command = "r.sun elevin=%s aspin=%s slopein=%s day=%s step=\".05\" dist=\"1\" glob_rad=%s --overwrite" % (dem_10m, zeros, zeros, str(i), flat_total_sun)
+os.system(command)
 
-#S_i = "S_i." + str(i)
-#command = "r.mapcalc \"%s=%s/%s\"" % (S_i, total_sun, flat_total_sun)
-#os.system(command)
-
-S_i = S_i + "." + str(i)
+S_i = "S_i." + str(i)
+command = "r.mapcalc \"%s=%s/%s\"" % (S_i, total_sun, flat_total_sun)
+os.system(command)
 
 tmin_topo = "tmin_topo." + str(i)
 command = "r.mapcalc \"%s=%s+(%s-(1/%s))\"" % (tmin_topo, tmin_loc,S_i,S_i)

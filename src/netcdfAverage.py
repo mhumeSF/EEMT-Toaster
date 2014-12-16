@@ -106,21 +106,13 @@ class netcdf:
         outputRasters = []
         inputRasters = []
         for day in self.days:
-            for folder in grassData.rmapOutputFolders:
-                outputRaster = grassData.grassdataFolder + "/" + folder + "/" + self.param + "." + str(day)
-                outputRasters.append(outputRaster)
+            
             inputRaster = self.param + "." + str(day)
             command = "r.mapcalc \"" + inputRaster + "=("
             first = True
-            once = True
             for year in self.years:
                 raster = self.param + "_" + str(year)
 
-                for folder in grassData.rmapOutputFolders:
-                    if once:
-                        inputRaster = grassData.grassdataFolder + "/" + folder + "/" + raster
-                        inputRasters.append(raster)
-                        once = not(once)
                 if first:
                     command += raster + "." + str(day)
                     first = not(first)
@@ -128,17 +120,7 @@ class netcdf:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
 
-            wq_command = []
-            wq_command.append(command)
-            wq_command.append(str(len(inputRasters)))
-
-            for item in inputRasters:
-                wq_command.append(item)
-            wq_command.append(str(len(outputRasters)))
-            for item in outputRasters:
-                wq_command.append(item)
-
-            #taskid = self.wq.wq_job(self.tag_name, wq_command)
+            
             taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
             # os.system(command)
@@ -181,10 +163,10 @@ class netcdf:
                     taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
                     taskids.append(taskid)
 
-                    self.wq.wq_wait(self.tag_name, taskids)
                 except:
                     print "rasterPatch command did not complete"
                 self.patchRaster = myRasterOutput
+        self.wq.wq_wait(self.tag_name, taskids)
 
     def toRaster(self):
         """
@@ -193,7 +175,8 @@ class netcdf:
         """
         i = 0
         for map in self.maps:
-            command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map
+            # save it as the same file name to save space
+            command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map + ".nc" 
             print command
             try:
                 os.system(command)
@@ -207,10 +190,7 @@ class netcdf:
                 os.system(command)
             except:
                 print "toRaster command did not complete"
-        #gdal_translate -of GTiFF NETCDF:tmin.nc -b 365 myAwesomeNetCDF
+        
         return
 
-    # netcdf_raster_year_day_a
-    # netcdf_raster_year_day_b
-
-    # patch a+b to produce patched raster
+    

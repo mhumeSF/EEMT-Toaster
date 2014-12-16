@@ -1,0 +1,6 @@
+work_queue_worker: creating workspace /tmp/worker-19994-9083
+connected to master 128.196.131.51:1026
+disconnected from master 128.196.131.51:1026
+work_queue_worker: deleting workspace /tmp/worker-19994-9083
+Your group nirav has been charged 00:42:11 for 1 cpus.
+You previously had 4939:05:32.  You now have 4938:23:21 remaining for the queue htc_standard

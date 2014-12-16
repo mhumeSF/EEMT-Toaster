@@ -20,7 +20,7 @@ def main ():
     """
     # if no args, suicide
     if len(sys.argv) == 1:
-        print ("Usage: %s <list_of_years> <list_of_param(s)> <list_of_tiff_file(s)>") % sys.argv[0]
+        print ("Usage: %s <list_of_years> <list_of_param(s)> <list_of_tiff_file(s)> <TWI:twi tiff to use>") % sys.argv[0]
         sys.exit("Command Line Args")
 
     # these are the only params that will be accepted
@@ -39,6 +39,11 @@ def main ():
         # If it is a valid tiff file
         elif is_tiff_file (i):
             tiff_files.append(i)
+        elif "TWI" in i[:3] and is_tiff_file (i[4:]):
+            twi_file = i[4:]
+        elif "1KM" in i[:3]:
+            dem_1km = i[4:]
+
         # if nothing else, check if it is a valid year after 1980 till year before current
         else:
             try:
@@ -68,6 +73,9 @@ def main ():
         tile_list = locn.getTiles (degrees)
         print tile_list
 
+        twiRaster = "twiRaster"
+        twi_r = raster(twi_file, twiRaster, wq)
+        
         demRaster = "demRaster"
         r = raster(tiff, demRaster, wq)
         slope = "slope"
@@ -84,16 +92,32 @@ def main ():
             glob_rad = total_sun + "." + str(day)
             r.sun(demRaster, slope, aspect, str(day), myStep, insol_time, glob_rad)
 
+        
         for param in params_to_use:
             netcdfs.append(nc.process(years, tile_list, param))
-
+        
+        print "Downloading files:"
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
-        nc.averageRasters()
-
+        nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
+        
+        print "Averaging rasters:"
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
+        print "Calculating r.sun:"
         wq.wq_wait(r.get_tag_name(), r.get_taskids())
+
+        taskids = []
+        for day in range(1,366):
+            command = "python eemt.py %s %s %s %s %s %s %s %s %s" % (demRaster, twiRaster, dem_1km, "tmin", "tmax", "prcp", total_sun, sun_hours, day)
+            taskid = wq.wq_job("eemt_toaster", [command, "0", "0"]) 
+            taskids.append(taskid)
+
+        #wait for final eemt task to complete
+        print "calculating EEMT"
+        wq.wq_wait("eemt_toaster", taskids)
+
+        #and we're kind of done
 
     # calculate S_i
     # naming schema S_i.(julian_day)
