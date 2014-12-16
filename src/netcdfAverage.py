@@ -138,7 +138,7 @@ class netcdf:
         The output will be raster files formatted "param_year.day"
         """
         taskids = []
-        self.tag_name = "netcdf_patch"
+        tag_name = "netcdf_patch"
         rastersWithDay = []
         for raster in self.rasters:
             rastersWithDay.append(raster + ".1")
@@ -170,7 +170,8 @@ class netcdf:
                     taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
                     taskids.append(taskid)
 
-                    self.wq.wq_wait(self.tag_name, taskids)
+                    self.wq.wq_wait(tag_name, taskids)
+
                 except:
                     print "rasterPatch command did not complete"
                 self.patchRaster = myRasterOutput
