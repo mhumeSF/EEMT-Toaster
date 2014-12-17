@@ -67,10 +67,6 @@ def main ():
             nc_objs.append(nc)
             nc.process(years, tile_list)
 
-        print "Calculating r.sun . . ."
-        wq.wq_wait(r.get_tag_name(), r.get_taskids())
-        print "Completed r.sun"
-
         print "Downloading files . . ."
         for nc in nc_objs:
             wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
@@ -79,9 +75,17 @@ def main ():
         for nc in nc_objs:
             nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
 
+        print "Converting to Rasters . . ."
+        wq.wq_wait ("netcdf_toRaster", nc.get_taskids())
+        print "Completed converting to rasters!"
+
         print "Averaging rasters . . ."
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
         print "Completed averaging rasters"
+
+        print "Calculating r.sun . . ."
+        wq.wq_wait(r.get_tag_name(), r.get_taskids())
+        print "Completed r.sun"
 
 """
         taskids = []

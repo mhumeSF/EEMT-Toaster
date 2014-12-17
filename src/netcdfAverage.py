@@ -170,6 +170,8 @@ class netcdf:
             # print command
             i+=1
             try:
-                os.system(command)
+                taskid = self.wq.wq_job ("netcdf_toRaster", [command, "1", mp+".nc", "0"])
+                self.taskids.append(taskid)
+                # os.system(command)
             except:
                 print "toRaster command did not complete"

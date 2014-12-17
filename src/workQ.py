@@ -15,7 +15,9 @@ class workQ:
         t = Task(cmd)
         t.specify_tag(tag)
 
-        for i in range(1, num_inputs + 1):
+        print arg_list
+        print "num_inputs = %d" % num_inputs
+        for i in range(2, num_inputs + 2):
             print ("Specifying file: " + arg_list[i])
             t.specify_file (arg_list[i], arg_list[i], WORK_QUEUE_INPUT, cache=False)
             if os.path.dirname(arg_list[i]):
