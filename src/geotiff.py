@@ -12,7 +12,7 @@ class geotiff:
         if not tiff:
             tiff = raw_input("Input path to geotiff file: ")
         try:
-            self.tiff = tiff 
+            self.tiff = tiff
         except:
             print("No valid geotiff file specified, exiting...")
 
@@ -29,7 +29,7 @@ class geotiff:
         command = ("gdalinfo " + self.tiff)
         #try to run gdalinfo command
         #info = subprocess.check_output(command, shell = True)
-        info = os.popen(command).read()   
+        info = os.popen(command).read()
         # This is a static set of lat/longs for testing purposes
         # info = "Upper Left  (  321240.000, 4106000.000) (119d 0'40.18\"W, 37d 4'59.71\"N) \n Lower Right (  526000.000, 2811000.000) 			( 80d44'29.28\"W, 25d24'56.39\"N)"
         #search for center coordinates in output of gdalinfo
@@ -62,13 +62,13 @@ class geotiff:
                     LRlat = LR[1][:-1].lower().strip()
 
                     #append (-)'s for S and W lon/lat values
-                    #remove N,S,E,W letters from strings                        
+                    #remove N,S,E,W letters from strings
                     for coord in [ULlon, ULlat, LRlon, LRlat]:
                         if coord[-1] in ['s', 'w']:
                             coord = '-' + coord[:-1]
                         else:
                             coord = coord[:-1]
-                        
+
                     #return the longitude and latitude values as tuple
                     return ((ULlat, ULlon), (LRlat, LRlon))
 
@@ -120,7 +120,7 @@ class geotiff:
         This method converts coordinates in decimal lat/lon format into the proper
         format to query the tile number matrix that we have built. It takes one
         argument, a tuple, which is a pair of lat/lon coordinates and returns the
-        local matrix indices corresponding to the coords. These can be used to 
+        local matrix indices corresponding to the coords. These can be used to
         lookup the index of tile IDs.
         """
         if coords and len(coords) == 2:
@@ -138,12 +138,12 @@ class geotiff:
 
     def getTiles(self, coords):
         """
-        This method takes in (UL LR) as a tuple and returns the list of tiles 
+        This method takes in (UL LR) as a tuple and returns the list of tiles
         that are contained in this rectangular geographical area.
         """
-	#if two command line arguments are specified
+        #if two command line arguments are specified
         if coords and len(coords) == 2:
-	    #parse them as a pair of lat/long values coresponding to the 
+	    #parse them as a pair of lat/long values coresponding to the
 	    #upper left and lower right of the region
 	    #then convert the format to matrix indices
             UL = self.toMatrix(coords[0].split())
@@ -176,8 +176,8 @@ class geotiff:
         This method calls gdalwarp on its argument to warp the coordinates of the
         geotiff file to the new coordinate system. It outputs a geotiff file.
         The two arguments are filenames to an input geotiff file and an output
-        geotiff file. 
-        """ 
+        geotiff file.
+        """
         command = "gdalwarp -overwrite -s_srs EPSG:26911 -t_srs \
                 \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 \
                 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear \

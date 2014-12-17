@@ -1,6 +1,7 @@
 #!/usr/bin/python2
 
 import sys, os, subprocess
+from toaster import toaster
 from netcdfAverage import *
 from geotiff import *
 from raster import *
@@ -27,31 +28,11 @@ def main ():
     possible_params = ["dayl", "prcp", "srad", "tmin", "tmax", "vp", "swe"]
 
     # initialize empty lists each for year, params and tiff files gathered from user input
-    params_to_use = []
-    tiff_files = []
-    years = []
-
-    # Now, the dirty drill!! PARSE!!
-    for i in sys.argv[1:]:
-        # If it is a param, add it, else...
-        if i in possible_params:
-            params_to_use.append(i)
-        # If it is a valid tiff file
-        elif is_tiff_file (i):
-            tiff_files.append(i)
-        elif "TWI" in i[:3] and is_tiff_file (i[4:]):
-            twi_file = i[4:]
-        elif "1KM" in i[:3]:
-            dem_1km = i[4:]
-
-        # if nothing else, check if it is a valid year after 1980 till year before current
-        else:
-            try:
-                year = int(i)
-                if year in range(1980, date.today().year):
-                    years.append(year)
-            except:
-                print ("Discarding meaningless argument: " + i)
+    params_to_use = toaster["params"]
+    tiff_files = toaster["dem"]
+    years = toaster["years"]
+    dem_1km = toaster["na_dem"]
+    twi_file = toaster["twi_file"]
 
     print years
     print params_to_use
@@ -75,7 +56,7 @@ def main ():
 
         twiRaster = "twiRaster"
         twi_r = raster(twi_file, twiRaster, wq)
-        
+
         demRaster = "demRaster"
         r = raster(tiff, demRaster, wq)
         slope = "slope"
@@ -87,20 +68,19 @@ def main ():
         sun_hours = "sun_hours"
         total_sun = "total_sun"
 
-        for day in range(1,366):
+        for day in range(1,2):
             insol_time = sun_hours + "." + str(day)
             glob_rad = total_sun + "." + str(day)
             r.sun(demRaster, slope, aspect, str(day), myStep, insol_time, glob_rad)
 
-        
         for param in params_to_use:
             netcdfs.append(nc.process(years, tile_list, param))
-        
+
         print "Downloading files:"
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
         nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
-        
+
         print "Averaging rasters:"
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
@@ -108,9 +88,9 @@ def main ():
         wq.wq_wait(r.get_tag_name(), r.get_taskids())
 
         taskids = []
-        for day in range(1,366):
+        for day in range(1,2):
             command = "python eemt.py %s %s %s %s %s %s %s %s %s" % (demRaster, twiRaster, dem_1km, "tmin", "tmax", "prcp", total_sun, sun_hours, day)
-            taskid = wq.wq_job("eemt_toaster", [command, "0", "0"]) 
+            taskid = wq.wq_job("eemt_toaster", [command, "0", "0"])
             taskids.append(taskid)
 
         #wait for final eemt task to complete

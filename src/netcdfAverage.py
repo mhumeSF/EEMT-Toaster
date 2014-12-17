@@ -69,12 +69,13 @@ class netcdf:
                 url = ("http://thredds.daac.ornl.gov/thredds/fileServer/ornldaac/1219/tiles/%d/%d_%d/%s.nc") % \
                     (year, tile, year, self.param)
 
-                command = ("wget -O %s %s") % (filename, url)
+                print url
+
+                command = ("wget --waitretry=10 --limit-rate=1000k -t 0 -o %s %s") % (filename, url)
 
                 # Check if file already exists and the size matches that of content-length from url head
-                if os.path.isfile (filename):
-                    if self.netcdfExists(url, filename):
-                        print filename + ": File Exists. Skipping Download..."
+                if self.netcdfExists(url, filename):
+                    print filename + ": File Exists. Skipping Download..."
                 else:
                     # os.system(command)
                     # arg1 -> tag_name
@@ -88,7 +89,7 @@ class netcdf:
         """
         Verifies netCDF is downloaded to it's entirety by verifying the filesize with the content-length header
         """
-        return int(os.path.getsize(filename)) == int(urllib2.urlopen(url).headers['content-length'])
+        return (os.path.isfile (filename)) and (int(os.path.getsize(filename)) == int(urllib2.urlopen(url).headers['content-length']))
 
 
     def averageRasters(self):
@@ -106,7 +107,7 @@ class netcdf:
         outputRasters = []
         inputRasters = []
         for day in self.days:
-            
+
             inputRaster = self.param + "." + str(day)
             command = "r.mapcalc \"" + inputRaster + "=("
             first = True
@@ -120,7 +121,7 @@ class netcdf:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
 
-            
+
             taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
             # os.system(command)
@@ -176,7 +177,7 @@ class netcdf:
         i = 0
         for map in self.maps:
             # save it as the same file name to save space
-            command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map + ".nc" 
+            command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map + ".nc"
             print command
             try:
                 os.system(command)
@@ -190,7 +191,7 @@ class netcdf:
                 os.system(command)
             except:
                 print "toRaster command did not complete"
-        
+
         return
 
-    
+
