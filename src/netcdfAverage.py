@@ -89,11 +89,8 @@ class netcdf:
 
 
     def averageRasters(self):
-
-        self.taskids = []
         self.toRaster()
 
-        return
         if len(self.tiles) > 1:
             self.rasterPatch()
         else:
@@ -102,26 +99,22 @@ class netcdf:
         self.tag_name = "netcdf_average"
         os.system("g.region rast=" + self.param + "." + str(self.days[0]))
 
-        outputRasters = []
-        inputRasters = []
         for day in self.days:
-
             inputRaster = self.param + "." + str(day)
             command = "r.mapcalc \"" + inputRaster + "=("
             first = True
+
             for year in self.years:
                 raster = self.param + "_" + str(year)
-
                 if first:
                     command += raster + "." + str(day)
                     first = not(first)
                 else:
                     command += "+" + raster + "." + str(day)
-            command += ")/" + str(len(self.years)) + "\""
 
+            command += ")/" + str(len(self.years)) + "\""
             taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
-            # os.system(command)
 
     def rasterPatch(self):
         """
@@ -173,14 +166,6 @@ class netcdf:
         """
         i = 0
         for mp in self.maps:
-            # save it as the same file name to save space
-            command = "gdal_translate -of GTiFF NETCDF:" + mp + ".nc " + mp + ".nc"
-            print command
-            try:
-                os.system(command)
-            except:
-                print "toRaster command did not complete"
-
             command = "r.external -o input=" + mp + ".nc output=" + self.rasters[i] +" --overwrite"
             # print command
             i+=1
@@ -188,5 +173,3 @@ class netcdf:
                 os.system(command)
             except:
                 print "toRaster command did not complete"
-
-        return

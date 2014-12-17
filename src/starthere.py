@@ -79,11 +79,9 @@ def main ():
         for nc in nc_objs:
             nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
 
-"""
-        print "Averaging rasters:"
+        print "Averaging rasters . . ."
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
-
-"""
+        print "Completed averaging rasters"
 
 """
         taskids = []
