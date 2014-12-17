@@ -6,14 +6,16 @@ from grassData import *
 
 class netcdf:
 
-    def __init__(self, workQueueObject):
+    def __init__(self, workQueueObject, param):
         """
         Constructor: takes a workqueue object as arg to be used for the rest of the class
         """
         self.wq = workQueueObject
+        self.param = param
         self.tag_name = "netcdf_download"
-        self.average_tag = "netcdf_average"
         self.taskids = []
+
+        # Create a netcdfs folder if it isn't there to store the netcdfs downloaded from Daymet
         if not os.path.exists ("netcdfs"):
             os.mkdir ("netcdfs")
 
@@ -26,33 +28,32 @@ class netcdf:
     def get_taskids (self):
         return self.taskids
 
-    def process (self, years, tiles, param):
+    def process (self, years, tiles):
         """
         This method takes three arguments, list of years, a list of tiles, and a parameter.
         It then calls all of the instance methods on the current object. It is a main method of sorts.
         """
         self.years = years
         self.tiles = tiles
-        self.param = param
-        self.days = range(1,366)
+        # ! ! ! ! ! ! ! ! ! ! ! ! !
+        # TODO
+        self.days = range(1,11)
         self.rasters = []
         self.maps = []
-        for tile in tiles:
-            for year in years:
-                self.maps.append( "netcdfs/" + str(param) + "_" + str(year) + "_" + str(tile) )
+
+        for tile in self.tiles:
+            for year in self.years:
+                self.maps.append( "netcdfs/" + str(self.param) + "_" + str(year) + "_" + str(tile) )
 
                 if len(self.tiles) > 1:
-                    self.rasters.append( str(param) + "_" + str(year) + "_" + str(tile) )
+                    self.rasters.append( str(self.param) + "_" + str(year) + "_" + str(tile) )
                 else:
-                    self.rasters.append( str(param) + "_" + str(year) )
+                    self.rasters.append( str(self.param) + "_" + str(year) )
 
         print self.rasters
         #set the projection and clear up g:
         command = "g.proj -c proj4=\"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\""
         os.system(command)
-        #clear up
-        # os.system("g.mremove \"*\"")
-
         self.getNetcdf()
 
     def getNetcdf(self):
@@ -69,21 +70,16 @@ class netcdf:
                 url = ("http://thredds.daac.ornl.gov/thredds/fileServer/ornldaac/1219/tiles/%d/%d_%d/%s.nc") % \
                     (year, tile, year, self.param)
 
-                print url
-
-                command = ("wget --waitretry=10 --limit-rate=1000k -t 0 -o %s %s") % (filename, url)
+                command = ("wget --waitretry=10 --limit-rate=1000k -t 0 -O %s %s") % (filename, url)
 
                 # Check if file already exists and the size matches that of content-length from url head
                 if self.netcdfExists(url, filename):
                     print filename + ": File Exists. Skipping Download..."
                 else:
-                    # os.system(command)
                     # arg1 -> tag_name
                     # arg2 -> list of strings : [command, num_inputs, <input file names>, num_outputs, <output file names>
                     taskid = self.wq.wq_job(self.tag_name, [command, "0", "1", filename])
                     self.taskids.append(taskid)
-                # except:
-                #     print "netcdf command did not complete"
 
     def netcdfExists(self, url, filename):
         """
@@ -96,6 +92,8 @@ class netcdf:
 
         self.taskids = []
         self.toRaster()
+
+        return
         if len(self.tiles) > 1:
             self.rasterPatch()
         else:
@@ -120,7 +118,6 @@ class netcdf:
                 else:
                     command += "+" + raster + "." + str(day)
             command += ")/" + str(len(self.years)) + "\""
-
 
             taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
@@ -175,16 +172,16 @@ class netcdf:
         for each day (band) within the netcdf input. Each band is separated by a period ie. "tmin_1980_11369.365".
         """
         i = 0
-        for map in self.maps:
+        for mp in self.maps:
             # save it as the same file name to save space
-            command = "gdal_translate -of GTiFF NETCDF:" + map + ".nc " + map + ".nc"
+            command = "gdal_translate -of GTiFF NETCDF:" + mp + ".nc " + mp + ".nc"
             print command
             try:
                 os.system(command)
             except:
                 print "toRaster command did not complete"
 
-            command = "r.external -o input=" + map + " output=" + self.rasters[i] +" --overwrite"
+            command = "r.external -o input=" + mp + ".nc output=" + self.rasters[i] +" --overwrite"
             # print command
             i+=1
             try:
@@ -193,5 +190,3 @@ class netcdf:
                 print "toRaster command did not complete"
 
         return
-
-

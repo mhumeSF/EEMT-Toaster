@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys, os
 from work_queue import *
-  
+
 class workQ:
     def __init__(self):
         self.q = WorkQueue(0)
@@ -51,5 +51,5 @@ class workQ:
                 print "task (id# %d) complete: %s (return code %d)" % (t.id, t.command, t.return_status)
             if completed_tasks == num_tasks:
                 break
-      
-        print "all tasks complete!"
+
+        print "tasks in this waitlist complete!"

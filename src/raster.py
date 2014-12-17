@@ -3,7 +3,6 @@ import sys, os, tempfile
 from subprocess import call
 from workQ import *
 
-
 class raster:
 
     def __init__(self, tiff, raster, wq):
@@ -23,29 +22,18 @@ class raster:
             self.output = raster
 
             try:
-                #r.external(input=self.tiff, output=self.output)
-                os.system("gdalwarp -overwrite -t_srs \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 -r bilinear -multi -dstnodata 0 -of GTiff %s %s" % (tiff, warped))
+                os.system("gdalwarp -overwrite -t_srs \
+                        \"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 \
+                        +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\" -tr 10 10 \
+                        -r bilinear -multi -dstnodata 0 -of GTiff %s %s" % (tiff, warped))
+
                 command = "r.external input=%s output=%s -o --overwrite" % (warped, self.output)
-                print command
                 os.system(command)
-
-                #call(["r.external", "input=%s" % (warped), "output=%s" % (self.output), "-o", "--overwrite" ])
-
             except:
-                print("r.external failed to generate raster file "
-                        + "with specified input/output names "
+                print("r.external failed to generate raster file with specified input/output names "
                         + self.tiff + " and " + self.output)
-
-            try:
-                #g.region(rast=self.output)
-                os.system("g.region rast=%s" % (self.output))
-
-	    except:
-                print("g.region failed to generate output raster file "
-                        + "with specified name: " + self.output)
         else:
             print("Missing input tiff or output raster argument")
-
 
     def export(self, raster, output):
         """
@@ -55,12 +43,8 @@ class raster:
         """
         try:
             os.system("r.out.gdal input=%s output=%s" % (raster, output))
-
-	except:
-            print("r.in.gdal failed to generate your geoTif")
-
-                #r.external(input=myInput, output=myOutput)
-
+        except:
+                print("r.in.gdal failed to generate your geoTif")
 
     def slopeAspect(self, elevationRaster, outputSlope, outputAspect):
         """
@@ -70,6 +54,7 @@ class raster:
         output name for an aspect file.
         """
         try:
+            os.system("g.region rast=%s" % (elevationRaster))
             command = "r.slope.aspect" \
                 + " elevation=" + elevationRaster \
                 + " slope=" + outputSlope \
@@ -81,7 +66,6 @@ class raster:
         except:
             print("Failed to run r.slope.aspect with specified arguments")
 
-
     def sun(self, myElevRaster, mySlope, myAspect, myDay, myStep, myInsol_time, myGlob_rad):
         """
         This method calls the r.sun function from the grass module. There are a
@@ -89,6 +73,7 @@ class raster:
         """
 
         try:
+            os.system("g.region rast=%s" % (myElevRaster))
             command = (
                 "r.sun " + \
                 " elevin=" + myElevRaster + \
@@ -108,7 +93,6 @@ class raster:
         except:
             print("r.sun failed to run with specified arguments, specifics "
                     + "unknown since there are so many freakin arguments!")
-
 
     def mapcalc(self, param, paramRaster, rasterOut, elevRaster, daymetRaster):
         """
@@ -136,8 +120,6 @@ class raster:
         #r.mapcalc f_tmax_loc=0.6108*exp((12.27*tmax_loc)/(tmax_loc+237.3))
         #r.mapcalc vp_s=(f_tmax_loc+f_tmin_loc)/2
         #r.mapcalc PET=(2.1*(hours_sun^2)*vp_s/((tmax_loc+tmin_loc)/2)
-
-    #def rPatch(self):
 
     def get_tag_name(self):
         return self.tag_name

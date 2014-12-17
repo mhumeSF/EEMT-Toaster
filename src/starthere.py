@@ -19,13 +19,6 @@ def main ():
     This function takes a bunch of params, years, filenames as arguments in any insane order
     and tries to make sense of what they are and use them somehow.
     """
-    # if no args, suicide
-    if len(sys.argv) == 1:
-        print ("Usage: %s <list_of_years> <list_of_param(s)> <list_of_tiff_file(s)> <TWI:twi tiff to use>") % sys.argv[0]
-        sys.exit("Command Line Args")
-
-    # these are the only params that will be accepted
-    possible_params = ["dayl", "prcp", "srad", "tmin", "tmax", "vp", "swe"]
 
     # initialize empty lists each for year, params and tiff files gathered from user input
     params_to_use = toaster["params"]
@@ -38,14 +31,11 @@ def main ():
     print params_to_use
     print tiff_files
 
-    if len(params_to_use) == 0:
-        params_to_use = possible_params
-
     netcdfs = []
     wq = workQ()
-    nc = netcdf(wq)
+    nc_objs = []
 
-
+    print "r.sun"
     for tiff in tiff_files:
         print ("Processing: " + tiff)
         locn = geotiff(tiff)
@@ -64,29 +54,38 @@ def main ():
         r.slopeAspect(demRaster, slope, aspect)
 
         myStep = "0.05"
-
         sun_hours = "sun_hours"
         total_sun = "total_sun"
 
-        for day in range(1,2):
+        for day in range(1,20):
             insol_time = sun_hours + "." + str(day)
             glob_rad = total_sun + "." + str(day)
             r.sun(demRaster, slope, aspect, str(day), myStep, insol_time, glob_rad)
 
         for param in params_to_use:
-            netcdfs.append(nc.process(years, tile_list, param))
+            nc = netcdf(wq, param)
+            nc_objs.append(nc)
+            nc.process(years, tile_list)
 
-        print "Downloading files:"
-        wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
+        print "Calculating r.sun . . ."
+        wq.wq_wait(r.get_tag_name(), r.get_taskids())
+        print "Completed r.sun"
 
-        nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
+        print "Downloading files . . ."
+        for nc in nc_objs:
+            wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
+        print "Completed Downloading files"
 
+        for nc in nc_objs:
+            nc.averageRasters() # cues up more jobs in the nc object -> another wait must be executed
+
+"""
         print "Averaging rasters:"
         wq.wq_wait(nc.get_tag_name(), nc.get_taskids())
 
-        print "Calculating r.sun:"
-        wq.wq_wait(r.get_tag_name(), r.get_taskids())
+"""
 
+"""
         taskids = []
         for day in range(1,2):
             command = "python eemt.py %s %s %s %s %s %s %s %s %s" % (demRaster, twiRaster, dem_1km, "tmin", "tmax", "prcp", total_sun, sun_hours, day)
@@ -106,6 +105,7 @@ def main ():
     #dem = "../dems/cali.output.mean.tif"
     #demRaster = "dem_raster"
 
+    """
 
 
 if __name__ == "__main__":
