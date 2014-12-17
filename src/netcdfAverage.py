@@ -35,9 +35,8 @@ class netcdf:
         """
         self.years = years
         self.tiles = tiles
-        # ! ! ! ! ! ! ! ! ! ! ! ! !
-        # TODO
-        self.days = range(1,11)
+        # Leap years are cool. So, we left them alone. You should probably do that, too
+        self.days = range(1,366)
         self.rasters = []
         self.maps = []
 
@@ -50,7 +49,6 @@ class netcdf:
                 else:
                     self.rasters.append( str(self.param) + "_" + str(year) )
 
-        print self.rasters
         #set the projection and clear up g:
         command = "g.proj -c proj4=\"+proj=lcc +lat_1=25 +lat_2=60 +lat_0=42.5 +lon_0=-100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs\""
         os.system(command)
@@ -62,7 +60,6 @@ class netcdf:
         and downloads them all into the local path. If a file with the same name is found in the current directory,
         downloading of the file is skipped assuming that the file has already been downloaded.
         """
-        print ("saving in directory: " + os.getcwd())
         for tile in self.tiles:
             for year in self.years:
                 filename = "netcdfs/" + self.param + "_" + str(year) + "_" + str(tile) + ".nc"
@@ -147,7 +144,7 @@ class netcdf:
                 myRasterOutput = str(self.param) + "_" + str(year)
 
                 command = "r.patch input=" + myRasterInput + " output=" + myRasterOutput + "." + str(i) + " --overwrite"
-                #print command
+
                 #patched raster outputs will be "param_year.day"
                 try:
                     #os.system(command)
@@ -167,7 +164,6 @@ class netcdf:
         i = 0
         for mp in self.maps:
             command = "r.external -o input=" + mp + ".nc output=" + self.rasters[i] +" --overwrite"
-            # print command
             i+=1
             try:
                 taskid = self.wq.wq_job ("netcdf_toRaster", [command, "1", mp+".nc", "0"])

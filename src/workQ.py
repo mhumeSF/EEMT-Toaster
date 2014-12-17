@@ -15,8 +15,6 @@ class workQ:
         t = Task(cmd)
         t.specify_tag(tag)
 
-        print arg_list
-        print "num_inputs = %d" % num_inputs
         for i in range(2, num_inputs + 2):
             print ("Specifying file: " + arg_list[i])
             t.specify_file (arg_list[i], arg_list[i], WORK_QUEUE_INPUT, cache=False)
@@ -34,7 +32,7 @@ class workQ:
         taskid = self.q.submit(t)
         # taskid = 0
         print t
-        print "submitted task (id# %d): %s" % (taskid, t.command)
+        print "Submitted taskid #%d: %s" % (taskid, t.command)
 
         return taskid
 
@@ -42,7 +40,7 @@ class workQ:
         if self.q.empty():
             return
 
-        print "waiting for tasks to complete..."
+        print ("Waiting for tasks with tag %s to complete...") % tag
         completed_tasks = 0
         num_tasks = len(wait_list)
 
@@ -50,8 +48,11 @@ class workQ:
             t = self.q.wait(1)
             if t and t.tag == tag:
                 completed_tasks = completed_tasks + 1
-                print "task (id# %d) complete: %s (return code %d)" % (t.id, t.command, t.return_status)
+                print ("\ntaskid #%d complete: (return code %d) %s") % (t.id, t.return_status, t.command)
+            else:
+                sys.stdout.write (".")
+
             if completed_tasks == num_tasks:
                 break
 
-        print "tasks in this waitlist complete!"
+        print ("\nTasks with tag %s complete!") % tag

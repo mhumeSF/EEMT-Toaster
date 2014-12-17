@@ -42,7 +42,6 @@ def main ():
         coords = locn.getCoordinates()
         degrees = locn.toDegrees(coords)
         tile_list = locn.getTiles (degrees)
-        print tile_list
 
         # Rasterize Topographic Wetness Index
         twiRaster = "twiRaster"
@@ -110,19 +109,6 @@ def main ():
         #wait for final eemt task to complete
         print "calculating EEMT"
         wq.wq_wait("eemt_toaster", taskids)
-
-"""
-        #and we're kind of done
-
-    # calculate S_i
-    # naming schema S_i.(julian_day)
-
-
-    #dem = "../dems/cali.output.mean.tif"
-    #demRaster = "dem_raster"
-
-    """
-
 
 if __name__ == "__main__":
     main()
