@@ -36,7 +36,7 @@ class netcdf:
         self.years = years
         self.tiles = tiles
         # Leap years are cool. So, we left them alone. You should probably do that, too
-        self.days = range(1,366)
+        self.days = range(1,2)
         self.rasters = []
         self.maps = []
 

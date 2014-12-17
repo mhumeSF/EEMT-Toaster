@@ -12,6 +12,13 @@ class workQ:
         num_inputs = int(arg_list[1])
         num_outputs = int(arg_list[num_inputs + 2])
 
+        print arg_list[0]
+        try:
+            os.system (arg_list[0])
+        except:
+            print ("command failed : " + arg_list[0])
+        return 1928
+
         t = Task(cmd)
         t.specify_tag(tag)
 
@@ -49,8 +56,9 @@ class workQ:
             if t and t.tag == tag:
                 completed_tasks = completed_tasks + 1
                 print ("\ntaskid #%d complete: (return code %d) %s") % (t.id, t.return_status, t.command)
-            else:
-                sys.stdout.write (".")
+            # else:
+            #     sys.stdout.write (".")
+            #     sys.stdout.flush ()
 
             if completed_tasks == num_tasks:
                 break

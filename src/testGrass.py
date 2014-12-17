@@ -2,11 +2,11 @@ from workQ import *
 from grassData import *
 
 grassFolder="../../nc_spf/PERMANENT"
-command="r.mapcalc \"z=5\""
+command="r.mapcalc \"grassTest2=5\""
 
 outputRasters = []
 for folder in grassData.rmapOutputFolders:
-    outputRasters.append(grassFolder + "/" + folder + "/z")
+    outputRasters.append(grassFolder + "/" + folder + "/grassTest2")
 
 print outputRasters
 
@@ -21,11 +21,11 @@ print wq_command
 
 wq = workQ()
 
-taskid = wq.wq_job("test_grass", wq_command)
+taskid = wq.wq_job("test_grass", [command, "0", "0"])
 taskids = []
 taskids.append(taskid)
 
-print "command: " 
+print "command: "
 for c in wq_command:
     print c
 print "tasks: "

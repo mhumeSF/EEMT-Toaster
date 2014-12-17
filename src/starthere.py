@@ -34,6 +34,7 @@ def main ():
     netcdfs = []
     wq = workQ()
     nc_objs = []
+    days = range(1, 2)
 
     for tiff in tiff_files:
         # Find the tile list for a partifular tiff file
@@ -60,7 +61,7 @@ def main ():
         total_sun = "total_sun"
 
         # Distribute r.sun and wait for it before eemt calculations
-        for day in range(1,20):
+        for day in days:
             insol_time = sun_hours + "." + str(day)
             glob_rad = total_sun + "." + str(day)
             r.sun(demRaster, slope, aspect, str(day), myStep, insol_time, glob_rad)
@@ -102,6 +103,8 @@ def main ():
 
         taskids = []
         for day in range(1,2):
+            total_sun = "total_sun." + str(day)
+            sun_hours= "sun_hours." + str(day)
             command = "python eemt.py %s %s %s %s %s %s %s %s %s" % (demRaster, twiRaster, dem_1km, "tmin", "tmax", "prcp", total_sun, sun_hours, day)
             taskid = wq.wq_job("eemt_toaster", [command, "0", "0"])
             taskids.append(taskid)

@@ -74,8 +74,8 @@ class raster:
 
         try:
             os.system("g.region rast=%s" % (myElevRaster))
-            command = (
-                "r.sun " + \
+            command = ( \
+                "r.sun" + \
                 " elevin=" + myElevRaster + \
                 " slopein=" + mySlope + \
                 " aspin=" + myAspect + \
@@ -86,7 +86,7 @@ class raster:
                 " -s" + \
                 " insol_time=" + myInsol_time + \
                 " glob_rad=" + myGlob_rad + \
-                " --overwrite"
+                " --overwrite" \
                 )
             taskid = self.wq.wq_job(self.tag_name, [command, "0", "0"])
             self.taskids.append(taskid)
